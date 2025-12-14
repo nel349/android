@@ -1,0 +1,1354 @@
+Those of you who have given Android interviews recently(in the last 6 months or ongoing), what gets asked now?
+Question
+So I'm(almost 4 yrs exp in Android) preparing currently and haven't interviewed in like 1.5 yrs anywhere so I'm a bit clueless if I'm in the direction with my preparation. I'm currently revising theoretical concepts that I had forgotten about (being away from work for 6 months, I'm too nervous now)
+
+I have a few questions:
+
+how much of theory gets asked in interviews now?
+
+Should i prioritise working on a project to practice coding more?
+
+LLD/HLD??
+
+Would be really helpful if you could share your recent experiences in Android Dev interviews with any questions you remember you got asked for reference And the interview process nowadays. Thanks so much in advance!
+
+
+Upvote
+90
+
+Downvote
+
+66
+Go to comments
+
+
+Share
+u/tokentax_co avatar
+tokentax_co
+•
+Promoted
+
+Get personalized tax planning and strategy advice from industry-leading crypto experts.
+Sign Up
+tokentax.co
+Thumbnail image: Get personalized tax planning and strategy advice from industry-leading crypto experts.
+Join the conversation
+Sort by:
+
+Best
+
+Search Comments
+Expand comment search
+Comments Section
+ananda3b
+•
+1y ago
+I was asked these questions in one of my recent interviews:
+
+What is application context? Difference between it and getContext
+
+Different types of coroutine scopes.
+
+What is LaunchedEffect? (Gave a scenario and i had to tell him the solution for it. The answer was via a launchedeffect)
+
+How to handle circular dependency in multi module app and how can we avoid it.
+
+Difference between Bluetooth and Bluetooth low energy.
+
+How to send data from one app to another. - intents
+
+Asked about MVVM architecture. Mvvm vs mvc vs mvi. Which is better for what case and why.
+
+How to manage versions in multi module apps - version catalogs.
+
+Some questions on my app projects and how i implemented them.
+
+
+
+Upvote
+77
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+Imo some questions are too specific, at least for me.
+
+Bluetooth vs Bluetooth low energy - what if the developer never needed to use bluetooth? I had literally one application in my career using that. if a developer needs to use bluetooth, he will read or use AI to explain it in a few minutes.
+
+MVC and MVI when MVVM is the standard? Ofc it is good to know alternatives, but MVVM is a standard and in most cases you will use MVVM anyway, as it is the best supported architecture by Google.
+
+How to send data from one app to another - again something really specific, how many apps use that? If you need this info, again, you can find it when you need it.
+
+I ask always questions based on standard applications, developer's CV and techonologies used.
+
+I ask about MVVM, multi module setup, coroutines, compose, what is DI and why it is like that, if they know Dagger/Hilt and Koin what is the difference between them, approach to testing, Clean Architecture, serializing library, delegates, gitflow etc. Everything that the standard application has (multimodule not always, but worth to know and isn't too specific).
+
+
+
+Upvote
+34
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+rmczpp
+•
+1y ago
+I'm glad to read this, I looked through the other questions and thought I was going crazy. And for a fresher role? But the questions you are asking seem far more reasonable.
+
+
+
+Upvote
+16
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+•
+Edited 1y ago
+One more thing - I ask those questions both to mids and seniors. I expect seniors to know most of them well, mids can have more troubles and it is fine. I always ask about experiences and what they use in their application. I have seen a lot of really good developers that were working in harsh environments with bad applications. If I see the skill and knowledge, I will say yes, even when they don't know those new, fancy libraries. They will learn and we will have great programmers
+
+
+
+Upvote
+12
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+rmczpp
+•
+1y ago
+Nice :)
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/bootsandzoots avatar
+bootsandzoots
+•
+1y ago
+I think it's fine to ask some of these specific questions because if they have experience in some of them, that can lead to a more detailed conversation, and you can get a sense of their experience. But it's not fair to count someone out just because they haven't used EVERY feature of android.
+
+
+
+Upvote
+4
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+I ask those specific ones only if they require more time to learn than just a little research or if it is based on their experience, then it makes perfect sense. If I see that some developer worked with Bluetooth previously, it is fine to ask about it
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+SpiderHack
+•
+1y ago
+My interview to be a contractor for meta reality labs didn't have this level of detail into specifics. (Mind you my specialty area and degrees show my skill level in that niche area, but still).
+
+Even I don't know the launched effect thing. But most companies are still not using compose (regardless of what people want to say) so I haven't focused on it. (I mainly help companies update to even having MVI so they can future move to compose with tested UI state), and then hand off the project when they reach that point.
+
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+Yes, compose is still not the standard. Asking about LaunchedEffect or state hoisting is good to know if someone knows the basics of compose, but I tell my HR team, that compose shouldn't be a hard requirement. Even in our team not everyone had a project with compose, so we can't expect new people to know it.
+
+
+Upvote
+4
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+•
+1y ago
+Yeah, the company I work with just started migrating to Compose components with ComposeView, but the code base is mostly written using MVP, so it will take a while until we fully convert to MVVM.
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+Slodin
+•
+1y ago
+It’s fine. Asking doesn’t mean rejected because you don’t know it. I don’t expect people to know 100% of what I ask on the sheet. 80% is like good enough. It gives me a good idea of the knowledge level AND communication skills.
+
+Usually these specific questions are asked to select candidates who are closer to what they are looking for. It’s pretty much a nice to have kind of thing, like bonus marks.
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+It would be fine if those were extra questions if the project needs those things. If you erase them, there are no questions about really important things, like DI, testing, standard libraries used in Android etc. Otherwise than that I agree with you
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+guttsX
+•
+1y ago
+But anyone who didn't know those could learn them so easily. I disagree that these types of things should require correct answers.
+
+This applies to pretty much any question you could possibly ask.
+
+Being able to answer 'technical' questions (imo) is pretty useless. I'd prefer someone that can solve difficult problems over someone who can answer exam type questions but couldn't program their way out of a plastic bag.
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+Using architecture and understanding a lot of those things, like DI, patterns or some other things also shows that they can understand difficult concepts. You would be surprised how many developers don't know what DI is about or why a multi module is needed and they just copy what they see. I have never seen a developer understanding those things but at the same time not being able to program. Maybe I was lucky
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+hey, thanks for sharing. can you tell what was the req exp level for the role you interviewed for?
+
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+ananda3b
+•
+1y ago
+This was for a fresher role🤦🏻‍♂️. The role was SDE. I had worked with them on a sponsored project there via my college. So i got the direct interview and no OA. They asked a lot of questions. These were asked in the first technical round.
+
+I cleared the first round, in the next tech round, they asked about spring boot, computer networking, DBMS, DSA questions (write a fn to find if it is safe to place a white queen if there a black queen present - not with 4 loops for diagonals, find center of ll in a single iteration)
+
+They were paying good tho. I had other offers so ehhh.
+
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+NullPointer_7749
+•
+1y ago
+a fresher role? These sound more like questions for an associate (over 2 years experience). When I see newcomers arriving at my company, it's clear that they won't be able to answer these questions.
+
+
+Upvote
+8
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+letsridetheworld
+•
+1y ago
+Thanks for the list.
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+fsevery
+•
+1y ago
+Wtf Why is The Bluetooth question still popping up. I actually got asked this myself a few years back. So random It's just an API like any other
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/abhay-cloud avatar
+abhay-cloud
+•
+1y ago
+I recently graduated (2024). I have had 2-3 interviews so for. Company 1: (Role for 2+ years experience, however I don't have 2 years of experience)
+
+Here is what they asked:
+
+What is the difference between java and Kotlin?
+
+What are the features of Kotlin?
+
+Scope functions in Kotlin.
+
+Coroutines in Kotlin.
+
+what is difference between kotlin coroutines and threads in java.
+
+Difference between async and launch?
+
+How to switch context in coroutines?
+
+What is mvvm architecture?
+
+What is a viewmodel?
+
+Do we write business logic in viewmodel?
+
+What is flow?
+
+Difference between stateflow and sharedflow.
+
+How to collect the latest value in the stateflow in activity?
+
+How to pass data between activities?
+
+What is dagger hilt?
+
+What is @provides, @module?
+
+What is singleton?
+
+What is lazy, lateinit?
+
+What are side effects in jetpack compose?
+
+App crashes when we use lazyColumn in column how would you solve this issue?
+
+What is disposable effect?
+
+Suppose if I want to set 3 elements in a row in a grid in compose, what would you use?
+
+Company 2:
+
+What is intent? Why do we use it?
+
+What is service & types of service.
+
+Why does android app lag?
+
+What is Dispatcher in coroutine and types of Dispatcher.
+
+What is a sealed class?
+
+What is the difference between a normal class and a data class?
+
+What is launchedEffecet?
+
+How to improve the performance of recyclerView, lazyColumn?
+
+What is flow?
+
+
+Upvote
+17
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+I have done a lot of interviews and was in a lot of interviews myself too. I will tell you not only what I like and what I don't, but also what I personally ask on my reviews for mid-senior positions.
+
+I hate pair programming, if someone fails it doesn't mean that someone is a bad programmer. It can mean that they work poorly under stress. Please interviewers, stop doing these unless your management enforces it.
+
+Code challenge at home - ehh I guess? Better than pair programming too, but then the candidate can use past projects. Algorithm challenges might be hit or miss too. I like those only for junior positions to see if the candidate understands the clean code or in general SOLID principles.
+
+I always ask questions based on standard applications, developer's CV and technologies used. Those questions can't be too specific, not everyone works with bluetooth or some other things like that. It is nonsense to ask those type of questions, because it doesn't mean if someone is good or not, especially when it is so easy to learn bluetooth stuff when needed. There is no "describe definition of SOLID" - it only proves that developers have good memory about definitions, it doesn't mean that they know how to produce clean code.
+
+I ask about MVVM, multi module setup, coroutines, compose, what is DI and why it is like that, if they know Dagger/Hilt and Koin what is the difference between them, approach to testing (Mockk, Turbine), Clean Architecture, serializing library, delegates, patterns, gitflow etc. Everything that the standard application has (multimodule not always, but worth to know and isn't too specific). Most of those things are always used in the application, no matter what applications you work on. For example if someone doesn't use Mockk, but some other libraries, it is fine too. I ask about experiences too and what they use. I check not only if they know standard libraries, but also if they understand what they are doing. Learning new libraries is easy, learning how to code properly is hard.
+
+
+
+Upvote
+15
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+IllusionIII
+•
+1y ago
+If someone can recite the google modularization guide (5min youtube video), can tell you what are all those things are (MVVM, coroutines etc...), and tell you a well rehearsed story of a challenging task they've solved in the past, then you'd be confident to say: "strong hire"?
+
+For me according to this we would end up hiring people without having any insight into what it's like to work with the candidate.
+
+So that is why I actually like some pair programming. I have a small project, 1 activity 1 ViewModel, with some issues. The issues are easy to detect (UI jank on button click, activity context stored in view model -> memory leak). And I ask them to do a review on the code, what issues they see, and how they might fix it.
+
+Immediately we are haveing discussion about a code. I have insight in how they approach problems. This way I know they know not only the definition of ANR and memory leak, but they can actually recognize them.
+
+Then later I give them one last more complicated task for implementing some behavior on the UI. The goal is not to see them provide a perfect solution the goal is to see how it is to solve problems with this person; will we be able to work together with them.
+
+At first we had questionare based interview as described by you and after having those I was always unsure wether or not I wanted to recommend the candidate. After having done the pair programming interviews I'm much more confident in my decisions.
+
+So my question is: how do you make sure it's going to be good to work with the candidate, that they are also capable of applying their knowledge and not just reciting "10 common android interview questions and answers" anki deck
+
+
+
+Upvote
+6
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+•
+Edited 1y ago
+So far my approach really worked. Maybe I was lucky, but I think asking questions if they understand the foundations of the application. It is not just "common Android interview questions and answers", it is also questions about how they work with the code, how they would refactor or how they would create an architecture for some problem. 5 minutes video will not teach them about it, really. A lot of developers use DI or multimodule without knowing why they do that. If they can talk about their experience and how they deal with the problems, it is easy to see if they really understand, no matter if they are stressed or not. Talking about your own ideas and experiences instead of doing challenges seems easier for stressed candidates. I have done some code challenges and I am the one getting stressed by those. I always succeeded, but I know that a little more stress and I wouldn't do it. Give me the same task, but offline and I will do it just fine.
+
+It is also good to gather feedback about your process of recruitment. After pair programming recruitment a lot of developers that I have talked with said "Oh, now I would do things differently, for sure I messed up" or "I succeeded, but would do things differently now".
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/cloud_harbor avatar
+cloud_harbor
+•
+10mo ago
+But in this case you are testing the candidate over specific framework + library knowledge. That's fine if you only care about recitation of libraries or frameworks. But it leaves off some of the most talented people who are polyglots and don't specialize in immediately being able to identify UI jank or a memory leak under stress in a 30 minute interview. They could learn this knowledge in a day and still be a better developer than the dev who you hired that recalled this knowledge from memory. That's why FAANG uses algorithms, datastructures system design and Leetcode rather than gotcha questions about a niche language, framework or library. Everything you're asking the candidate to recall from memory can be learned in days, not weeks.
+
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+IllusionIII
+•
+10mo ago
+•
+Edited 10mo ago
+But for example detecting an ANR and knowing why it happens is very fundamental. Okay you're a polyglot and don't know much about Kotlin, I guess since you're applying for an Android dev job you do know at least something about the framework. Handling an ANR shows me that you understand what threads are, what is the UI threas and how to offload tasks to a background thread and get back a result while avoiding race conditions. That's fundamental and not just a gotcha. No matter whether you're working with Flutter, react, ios etc... offloading from the UI thread is a fundamental issue.
+
+I have prepared for google interviews and guess what, it's all about gotchas. You need to drill all the leetcode questions and hope you will get one that you've exercised on before. I don't want to judge a candidate based on if they've drilled the KMP algorithm yesterday or not. If you've drilled leetcode before then you know it too: most questions have a trick, and if you don't know the trick then you will spend 10 times more time on solving it than if you knew the trick. I don't care how many tricks they know.
+
+So for a job 95% including building and debugging Android apps and basically never inverting Binary trees I will test the candidates in their ability to build and debug Android apps and how well I can discuss problems with them.
+
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/cloud_harbor avatar
+cloud_harbor
+•
+10mo ago
+> Handling an ANR shows me that you understand what threads are, what is the UI threas and how to offload tasks to a background thread and get back a result while avoiding race conditions. That's fundamental and not just a gotcha. No matter whether you're working with Flutter, react, ios etc... offloading from the UI thread is a fundamental issue.
+
+This is a good point but it begs the question: why not just ask the candidate about the fundamentals. What is a thread? Why offload from the UI thread? Why use background threads? This way you're asking about fundamental software, ui or mobile engineering rather than "do you know how to code a background thread in Kotlin?" If a college student who just built an Android project can answer your question but someone with 10 years of experience as a principal backend engineer cannot it's not a very good question. That's why these interviews are fundamentally broken and yet still we continue to perpetuate them as an industry.
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/tastytrade avatar
+u/tastytrade
+•
+Promoted
+
+tastytrade is the streamlined, secure platform for trading. Because you want a legit partner for crypto, stocks, and all your other investments.
+Learn More
+tastytrade.com
+Thumbnail image: tastytrade is the streamlined, secure platform for trading. Because you want a legit partner for crypto, stocks, and all your other investments.
+RebelMo0n
+•
+1y ago
+•
+Edited 1y ago
+Recently, I got asked the following questions:
+
+What is Activity
+
+What is fragment
+
+What is XML
+
+What is MVVM
+
+If you are in the activity, and you are trying to call your database, what are you going to use in order for your UI still responsive (or something like that. I forgot the correct sentence)
+
+What do you use to run your app asynchronously
+
+What is memory leak and where is it stored
+
+There were some coding test as well.
+
+I forgot the other questions and I messed up my interview because I was not prepared and since English is not my first language.
+
+
+
+Upvote
+14
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+thanks! coding test you mean dsa/leetcode?
+
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+RebelMo0n
+•
+1y ago
+•
+Edited 1y ago
+There were two coding tests. One is related to hashmap where you need to overwrite existing data if it already exists instead of adding a new one. Second was returning a list in descending order. The interviewer provided me a link of coderpad. Coderpad is what some companies used for coding test
+
+
+Upvote
+4
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/alslacki avatar
+alslacki
+•
+1y ago
+I always get asked questions regarding concurrency, threading, threadpools, thread safety, and differences between those and coroutines. you should know them well.
+
+
+
+Upvote
+14
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+3dom
+•
+1y ago
+Profile Badge for the Achievement Top 1% Commenter Top 1% Commenter
+Any Compose questions? Specifics if possible, please.
+
+The job market seems to be getting a traction again, got couple tips on Facebook contracts in London couple days ago (the pay is on the lower part of spectrum though)
+
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+Theme managing, state hoisting, best practices I would say, at least that's what I am asking. It shows if you create your composables with a good approach or you just happen to know some basics of compose and can create some UI.
+
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+3dom
+•
+1y ago
+Profile Badge for the Achievement Top 1% Commenter Top 1% Commenter
+Thanks much! Right now I feel like I can get the salary twice higher - or at least a job, twice faster - if I'll answer the same level "specifics" about Python and AI/ML RAG installations, which are pretty basic compared to the real Android programming.
+
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+MindCrusader
+•
+1y ago
+Good luck :) Other reviewers might ask other questions, keep that in mind. I am one of those that ask really pragmatic questions. Some interviewers ask a lot about theory, definitions and questions from the moon, so don't worry if you fail some recruitments
+
+You can also try to learn basic compose layouts, how to produce some views, and align it or use constraint layout in compose. Those can be useful too for code challenges
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+herrbert74
+•
+1y ago
+Be careful with Indians and Facebook contracts. They are most probably scammers going for your data, or poor quality recruiters who try to build a client base.
+
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+3dom
+•
+1y ago
+Profile Badge for the Achievement Top 1% Commenter Top 1% Commenter
+Interesting. Thanks for heads up!
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+•
+1y ago
+"Telugu/Hyderabad scammers" from consultancies
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+Thanks for sharing! are they more theory focused or they check if you can code them as well? do u recall how much time is theory focused in the interview? And do they expect you to know internal working of everything? like how coroutines work internally?
+
+
+
+Upvote
+4
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/alslacki avatar
+alslacki
+•
+1y ago
+for faang level companies ive been asked to do a basic implementation of those, otherwise the theory for lower level companies
+
+
+
+Upvote
+4
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+DutchMrT
+•
+1y ago
+Any recommended sources for the theory?
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+WobblySlug
+•
+1y ago
+I offer quick fire questions, or a small coding exercise.
+
+100% of people so far take the exercise. Answering questions on the spot is a terrible way to glimpse someone's coding abilities imo, especially in situations where the interviewee is likely nervous.
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/OpenAI avatar
+u/OpenAI
+• Official
+•
+Promoted
+
+Codex is a coding agent from OpenAI. It reviews pull requests with the depth of a senior engineer - running code, verifying dependencies, and flagging edge cases before they hit production. Clear explanations and suggested improvements included to ship safely. Powered by ChatGPT, with paid plans.
+Sign Up
+chatgpt.com
+Thumbnail image: Codex is a coding agent from OpenAI. It reviews pull requests with the depth of a senior engineer - running code, verifying dependencies, and flagging edge cases before they hit production. Clear explanations and suggested improvements included to ship safely. Powered by ChatGPT, with paid plans.
+
+[deleted]
+•
+1y ago
+tkbillington
+•
+1y ago
+Threading, Coroutines/Flows, RxJava, binary tree search, and intents was my latest one. I didn’t do well but if they actually needed all that regularly at the job, I wouldn’t have liked it anyways.
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+spacetime_navigator
+•
+1y ago
+Jetpack compose, coroutines, kotlin multiplatform
+
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+ankittale
+•
+1y ago
+No dagger and RxJava
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+spacetime_navigator
+•
+1y ago
+Companies I talked to are migrating rxjava to kotlin flows and coroutines. Dagger2 and hilt are mentioned, but they are not new
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+•
+1y ago
+I ran an interview process a few months ago (we have already hired an engineer). What I asked was:
+
+Kotlin basics, mutable vs immutable, var vs val, seal classes, data classes, how you use these on your day to day development?
+
+Android basics, activity lifecycle vs fragment lifecycle.
+
+You use Compose? what is recomposition? what is the @stable for? what is state hoisting?
+
+Architecture basics, DI what you use it for? what is MVVM? how you communicate data from the viewmodel back to the UI?
+
+Then, a take-home assignment that is implementing a paginated list screen. Something anyone can do in 4, 5 hours.
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/AutoModerator avatar
+AutoModerator
+MOD
+•
+1y ago
+Please note that we also have a very active Discord server where you can interact directly with other community members!
+
+Join us on Discord
+
+I am a bot, and this action was performed automatically. Please contact the moderators of this subreddit if you have any questions or concerns.
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+kkgmgfn
+•
+1y ago
+r/AndroidInterviewQ
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+joined it! will browse through the posts but it doesn't seem active currently
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+bdenney85
+•
+1y ago
+What level are you and what sort of companies are you going after?
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+not working currently (was on a break), will interview everywhere but targeting FAANG level companies/big tech
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/makonde avatar
+makonde
+•
+1y ago
+Big tech is almost always leetcode style at entry level.
+
+
+Upvote
+5
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+bdenney85
+•
+1y ago
+I would definitely practice leetcode-type problems and try to solve a medium within about 20 minutes, maybe hard if you're doing FAANG. Also don't pound your head against the wall trying to figure one out. It's better to learn what the optimal solution is, try to code that out, and learn how to recognize problems of that type in the future.
+
+Apart from that I got a lot of practical problems as well. Stuff like "build a class that does x".
+
+Finally, don't sleep on the soft skill problems if you're looking for anything other than entry. Have a couple of stories in mind that you can kind of mold into the types of answers people are looking for in those interviews.
+
+
+
+Upvote
+3
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+That’s good advice, Thank you! how much of Android do they ask in faang? i wanted to know if they even care about theory or test your android skills with system design questions?
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+bdenney85
+•
+1y ago
+Yep you got it exactly - the system design questions is definitely where you'd get your android knowledge tested. Also one of the coding rounds might be focused on building an app in the interview.
+
+Also I'd say that some places will do.some Android trivia but in general that's kind of looked down upon nowadays and places that invest in interviewing as a skill will not do it.
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/Lostpollen avatar
+Lostpollen
+•
+1y ago
+What are you using to revise?
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+i had some notes + going through android documentation for some topics
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+frakc
+•
+1y ago
+In one of the latest interviews i was asked my zodiak sign and why i dont know my natal card.
+
+
+
+Upvote
+0
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+[deleted]
+OP
+•
+1y ago
+?? 💀
+
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+frakc
+•
+1y ago
+Some HR are paractices wierd belives.
+
+
+Upvote
+2
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+u/Zestyclose-Interest1 avatar
+Zestyclose-Interest1
+•
+1y ago
+I was asked to do a live coding, they gave me a project that has done already, but it has many bugs. I had do refactor everything in it. Felt like I re wrote the whole feature which lasted 1.5 hour. Did not manage finish fully but explained what should have been done. No compose, coroutines/flow questions were asked.
+
+Overall, the feedback was positive. After the interview, I realised that I did some minor errors while I was doing it. The interview was 2 days ago, so now I am waiting for their decision.
+
+Another interview was in a well known German company which was supposed to be a technical but they asked more behavioural questions. They only asked about what is JVM, what is R8, that's all I guess. Then continued how did I work, what agile methodologies we used. The feedback at the end was positive, but received a rejection email after 3 days.
+
+
+Upvote
+1
+
+Downvote
+
+Reply
+
+Award
+
+Share
+
+wtfishappeninggod
+•
+6mo ago
+This is a good post guys
