@@ -2,4 +2,20 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- App Colors -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="accent">#FF9800</color>
+
+    <!-- Weather Colors -->
+    <color name="sunny">#FFA726</color>
+    <color name="cloudy">#90A4AE</color>
+    <color name="rainy">#5C6BC0</color>
+
+    <!-- UI Colors -->
+    <color name="background_light">#F5F5F5</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="error">#D32F2F</color>
 </resources>

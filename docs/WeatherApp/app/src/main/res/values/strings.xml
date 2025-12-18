@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+
+    <!-- UI Labels -->
+    <string name="city_label">City</string>
+    <string name="temperature_label">Temperature</string>
+    <string name="description_label">Description</string>
+    <string name="humidity_label">Humidity</string>
+    <string name="wind_speed_label">Wind Speed</string>
+
+    <!-- Actions -->
+    <string name="fetch_weather_button">Get Weather</string>
+    <string name="city_hint">Enter city name</string>
+
+    <!-- Messages -->
+    <string name="loading_message">Loading weather data…</string>
+    <string name="error_message">Failed to fetch weather. Please try again.</string>
+    <string name="empty_city_error">Please enter a city name</string>
 </resources>
