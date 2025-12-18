@@ -5,9 +5,11 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
-    android:layout_marginTop="@dimen/spacing_xlarge"
-    android:padding="@dimen/spacing_medium"
+    android:background="@color/primary"
+    android:fitsSystemWindows="true"
+    android:paddingStart="@dimen/spacing_large"
+    android:paddingEnd="@dimen/spacing_large"
+    android:paddingBottom="@dimen/spacing_large"
     tools:context=".MainActivity">
 
     <!-- City Input Field -->
@@ -15,6 +17,7 @@
         android:id="@+id/cityInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_large"
         android:hint="@string/city_hint"
         app:layout_constraintEnd_toStartOf="@+id/fetchWeatherButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/button_height"
         android:layout_marginStart="@dimen/spacing_small"
+        android:layout_marginEnd="@dimen/spacing_large"
         android:text="@string/fetch_weather_button"
         app:layout_constraintBottom_toBottomOf="@+id/cityInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
