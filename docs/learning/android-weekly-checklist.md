@@ -8,25 +8,27 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 1: Kotlin Refresh (15 hours)
 
+#### Kotlin Language Topics
+
 **Scope Functions:**
-- [ ] Understand `let` (null safety + transformation, returns lambda result)
-- [ ] Understand `run` (scoped operations, returns lambda result)
-- [ ] Understand `with` (grouping function calls, returns lambda result)
-- [ ] Understand `apply` (object configuration, returns receiver)
-- [ ] Understand `also` (side effects, returns receiver)
-- [ ] Know when to use each (decision tree)
+- [x] Understand `let` (null safety + transformation, returns lambda result)
+- [x] Understand `run` (scoped operations, returns lambda result)
+- [x] Understand `with` (grouping function calls, returns lambda result)
+- [x] Understand `apply` (object configuration, returns receiver)
+- [x] Understand `also` (side effects, returns receiver)
+- [x] Know when to use each (decision tree)
 
 **Null Safety:**
-- [ ] Safe call operator `?.`
-- [ ] Elvis operator `?:`
-- [ ] Avoid `!!` (null assertion operator)
-- [ ] Nullable types (`String?` vs `String`)
-- [ ] Safe casts (`as?`)
+- [x] Safe call operator `?.`
+- [x] Elvis operator `?:`
+- [x] Avoid `!!` (null assertion operator)
+- [x] Nullable types (`String?` vs `String`)
+- [x] Safe casts (`as?`)
 
 **Initialization:**
-- [ ] `lateinit` (mutable, initialized before use)
-- [ ] `lazy` (immutable, initialized on first access)
-- [ ] When to use each
+- [x] `lateinit` (mutable, initialized before use)
+- [x] `lazy` (immutable, initialized on first access)
+- [x] When to use each
 
 **Coroutines Basics:**
 - [ ] `launch` (fire-and-forget, returns Job)
@@ -41,6 +43,43 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] SharedFlow (hot, configurable replay)
 - [ ] `collect` vs `collectLatest`
 
+#### Android Framework Topics
+
+**Activity Lifecycle:**
+- [ ] Activity lifecycle methods (onCreate, onStart, onResume, onPause, onStop, onDestroy)
+- [ ] Configuration changes (screen rotation)
+- [ ] Saving state (onSaveInstanceState, Bundle)
+
+**Layouts & Views (XML-based):**
+- [ ] ConstraintLayout (modern, flexible layout)
+- [ ] LinearLayout basics
+- [ ] RecyclerView fundamentals
+- [ ] ViewBinding (replace findViewById)
+- [ ] Understanding View hierarchy
+
+**Android Manifest:**
+- [ ] INTERNET permission
+- [ ] Application configuration
+- [ ] Activity declarations
+
+**Resources System:**
+- [ ] strings.xml (externalize strings)
+- [ ] colors.xml, dimens.xml
+- [ ] Resource qualifiers (different screen sizes)
+
+**Context:**
+- [ ] Application context vs Activity context
+- [ ] When to use each
+
+**Gradle Basics:**
+- [ ] build.gradle (app level vs project level)
+- [ ] Adding dependencies (Retrofit, Gson, etc.)
+- [ ] minSdk, targetSdk, compileSdk
+
+**Debugging:**
+- [ ] Logcat basics
+- [ ] Breakpoints in Android Studio
+
 **Project:**
 - [ ] Weather app mini-project started
 - [ ] OpenWeatherMap API integrated
@@ -54,17 +93,25 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 2: MVVM + Components (15 hours)
 
+#### Kotlin Language Topics
+
+**LiveData vs Flow:**
+- [ ] Flow (more flexible, Kotlin-first)
+- [ ] StateFlow for UI state
+- [ ] When to use Flow vs LiveData
+
+#### Android Framework Topics
+
 **ViewModel:**
 - [ ] What is ViewModel (survives config changes)
 - [ ] `viewModelScope` for coroutines
 - [ ] ViewModel lifecycle
 - [ ] ViewModel factories (if needed)
 
-**LiveData vs Flow:**
+**LiveData:**
 - [ ] LiveData (lifecycle-aware, UI only)
-- [ ] Flow (more flexible, Kotlin-first)
-- [ ] StateFlow for UI state
-- [ ] When to use each
+- [ ] Observing LiveData in Activity/Fragment
+- [ ] LiveData transformations
 
 **Room Database:**
 - [ ] Entities (`@Entity`, `@PrimaryKey`)
@@ -79,6 +126,12 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] SafeArgs (type-safe arguments)
 - [ ] Deep linking basics
 
+**Fragments:**
+- [ ] Fragment lifecycle
+- [ ] FragmentManager and transactions
+- [ ] Fragment-Activity communication
+- [ ] Fragment arguments (Bundle)
+
 **Project:**
 - [ ] Weather app: Add MVVM architecture
 - [ ] Weather app: Add Room caching (offline-first)
@@ -92,6 +145,16 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 3: DI + Testing (15 hours)
 
+#### Kotlin Language Topics
+
+**Testing:**
+- [ ] JUnit basics (`@Test`, assertions)
+- [ ] MockK (mocking dependencies)
+- [ ] Turbine (testing Flow)
+- [ ] Coroutine testing (`runTest`, `TestDispatcher`)
+
+#### Android Framework Topics
+
 **Hilt Dependency Injection:**
 - [ ] `@HiltAndroidApp` (Application class)
 - [ ] `@AndroidEntryPoint` (Activity, Fragment, ViewModel)
@@ -101,12 +164,11 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] `@Inject` (inject dependencies)
 - [ ] Scopes: `@Singleton`, `@ActivityScoped`, `@ViewModelScoped`
 
-**Testing:**
-- [ ] JUnit basics (`@Test`, assertions)
-- [ ] MockK (mocking dependencies)
-- [ ] Turbine (testing Flow)
+**Android Testing:**
 - [ ] ViewModel testing (fake repository)
 - [ ] `InstantTaskExecutorRule` for LiveData
+- [ ] AndroidX Test library
+- [ ] Testing Room DAOs
 
 **Project:**
 - [ ] Weather app: Add Hilt
@@ -124,10 +186,18 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 4: Compose + SDK Start (18 hours)
 
+#### Kotlin Language Topics
+
+**Compose State (Kotlin Integration):**
+- [ ] `remember`, `mutableStateOf`
+- [ ] `State<T>` vs `MutableState<T>`
+- [ ] Delegates (`by` keyword for state)
+
+#### Android Framework Topics
+
 **Jetpack Compose Fundamentals:**
 - [ ] Composable functions (`@Composable`)
-- [ ] State and recomposition (`remember`, `mutableStateOf`)
-- [ ] `State<T>` vs `MutableState<T>`
+- [ ] State and recomposition
 - [ ] State hoisting (lift state up)
 - [ ] Unidirectional data flow
 
@@ -137,16 +207,21 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] `Modifier` (padding, size, click, etc.)
 - [ ] Spacer, Divider
 
-**Side Effects:**
+**Compose Side Effects:**
 - [ ] `LaunchedEffect` (for suspend functions)
 - [ ] `DisposableEffect` (cleanup on leave)
 - [ ] `SideEffect` (publish to non-Compose code)
 - [ ] `rememberCoroutineScope`
 
-**Compose State:**
+**Compose State Management:**
 - [ ] `collectAsState()` (Flow → State)
 - [ ] `collectAsStateWithLifecycle()` (lifecycle-aware)
 - [ ] `rememberSaveable` (survive process death)
+
+**Compose Theming:**
+- [ ] Material Design 3 basics
+- [ ] Color scheme
+- [ ] Typography
 
 **Project:**
 - [ ] Weather app: Migrate UI to Compose
@@ -163,6 +238,15 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 5: Clean Arch + Multi-Module (15 hours)
 
+#### Kotlin Language Topics
+
+**Kotlin for Architecture:**
+- [ ] Sealed classes (for Result/State types)
+- [ ] Data classes (for models)
+- [ ] Extension functions (for mappers)
+
+#### Android Framework Topics
+
 **Clean Architecture:**
 - [ ] Domain layer (entities, repository interfaces, use cases)
 - [ ] Data layer (repository implementations, data sources)
@@ -175,7 +259,7 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Module dependencies (feature → core)
 - [ ] Version catalogs (`libs.versions.toml`)
 
-**Convention Plugins:**
+**Gradle Convention Plugins:**
 - [ ] Build logic structure
 - [ ] Shared build configuration
 - [ ] Compose plugin, Hilt plugin
@@ -197,6 +281,8 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 6: Advanced Coroutines + Data Layer (18 hours)
 
+#### Kotlin Language Topics
+
 **Structured Concurrency:**
 - [ ] `coroutineScope` (parallel tasks)
 - [ ] `supervisorScope` (don't cancel siblings)
@@ -208,12 +294,20 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Hot vs cold flows
 - [ ] `stateIn` (convert cold to hot)
 - [ ] `shareIn` (share cold flow)
-- [ ] Flow operators: `combine`, `flatMapLatest`, `debounce`
+- [ ] Flow operators: `combine`, `flatMapLatest`, `debounce`, `map`, `filter`
+
+#### Android Framework Topics
 
 **Repository Pattern:**
 - [ ] Single source of truth (local DB)
 - [ ] Network + cache strategy
 - [ ] Result wrapper (Success/Error)
+- [ ] Offline-first architecture
+
+**Data Layer Implementation:**
+- [ ] Data sources (local, remote)
+- [ ] DTO to Entity mapping
+- [ ] Cache invalidation strategies
 
 **Project:**
 - [ ] Midnight Wallet: Crypto layer (key generation, signing)
@@ -226,6 +320,15 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 ---
 
 ### Week 7: Advanced Compose + Wallet UI (18 hours)
+
+#### Kotlin Language Topics
+
+**MVI Pattern (Kotlin):**
+- [ ] Single immutable state (data class)
+- [ ] Intent sealed class
+- [ ] Immutability patterns
+
+#### Android Framework Topics
 
 **Advanced Compose:**
 - [ ] Custom layouts (`Layout` composable)
@@ -240,10 +343,15 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] `performClick()`, `performTextInput()`
 - [ ] `assertIsDisplayed()`, `assertTextEquals()`
 
-**MVI Pattern:**
-- [ ] Single immutable state
-- [ ] Intent sealed class
+**Compose Navigation:**
+- [ ] NavController in Compose
+- [ ] Type-safe navigation
+- [ ] Passing arguments
+
+**MVI Pattern (Android Implementation):**
 - [ ] Unidirectional data flow
+- [ ] State hoisting to ViewModel
+- [ ] Event handling
 
 **Project:**
 - [ ] Midnight Wallet: Full Compose UI
@@ -257,23 +365,35 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 8: Testing + CI/CD (20 hours)
 
+#### Kotlin Language Topics
+
+**Kotlin Testing:**
+- [ ] Fakes vs Mocks (when to use each)
+- [ ] Test doubles
+- [ ] Assertion libraries
+
+#### Android Framework Topics
+
 **Comprehensive Testing:**
 - [ ] Unit tests (ViewModel, UseCase, Repository)
 - [ ] Integration tests (Repository + DAO + API)
 - [ ] Compose UI tests (user flows)
 - [ ] Test coverage (80%+ goal)
+- [ ] Testing best practices
 
 **Security:**
 - [ ] EncryptedSharedPreferences
 - [ ] Android Keystore
 - [ ] ProGuard/R8 rules
 - [ ] SSL pinning (if needed)
+- [ ] Certificate pinning
 
 **CI/CD:**
 - [ ] GitHub Actions workflow
 - [ ] Build on push
 - [ ] Run tests
-- [ ] Lint checks (detekt)
+- [ ] Lint checks (detekt, ktlint)
+- [ ] Code quality gates
 
 **Project:**
 - [ ] Midnight Wallet: Comprehensive tests
@@ -290,6 +410,15 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 9: Performance + Profiling (15 hours)
 
+#### Kotlin Language Topics
+
+**Kotlin Performance:**
+- [ ] Inline functions
+- [ ] Sequence vs List (lazy evaluation)
+- [ ] Avoiding unnecessary allocations
+
+#### Android Framework Topics
+
 **Android Profiler:**
 - [ ] CPU profiler (identify slow methods)
 - [ ] Memory profiler (heap dumps, allocations)
@@ -300,12 +429,14 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] LeakCanary setup
 - [ ] Common leak patterns (Activity refs, listeners)
 - [ ] Weak references
+- [ ] Debugging memory leaks
 
 **Performance Optimization:**
 - [ ] LazyColumn best practices
 - [ ] Overdraw detection
 - [ ] Layout Inspector
 - [ ] Baseline profiles (advanced)
+- [ ] Compose performance optimization
 
 **Project:**
 - [ ] Profile Midnight Wallet
@@ -319,22 +450,34 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 10: Advanced Android Topics (18 hours)
 
+#### Kotlin Language Topics
+
+**Advanced Kotlin:**
+- [ ] Generics and variance (`in`, `out`)
+- [ ] Higher-order functions
+- [ ] DSL creation basics
+
+#### Android Framework Topics
+
 **Custom Views:**
 - [ ] `onMeasure` (determine size)
 - [ ] `onLayout` (position children)
 - [ ] `onDraw` (render on canvas)
 - [ ] Touch events (`onTouchEvent`)
+- [ ] Custom attributes
 
 **WorkManager:**
 - [ ] OneTime vs Periodic work
 - [ ] Constraints (network, charging, battery)
 - [ ] Chaining work
 - [ ] Observing work status
+- [ ] Data passing between workers
 
 **App Optimization:**
 - [ ] R8 minification
 - [ ] App bundle (AAB)
 - [ ] Dynamic feature modules (advanced)
+- [ ] Build variants
 
 **Project:**
 - [ ] AI Chat: Multi-module setup
@@ -347,15 +490,26 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 11: System Design Practice (20 hours)
 
+#### Android System Design Topics
+
 **Practice These Designs:**
 - [ ] Instagram feed (pagination, caching, offline)
 - [ ] WhatsApp messaging (real-time, encryption)
 - [ ] Uber driver app (location, real-time)
 - [ ] Google Maps offline (tile storage, search)
 
-**Document:**
+**System Design Skills:**
+- [ ] Requirements gathering
+- [ ] API design
+- [ ] Data modeling
+- [ ] Offline-first strategies
+- [ ] Real-time communication patterns
+- [ ] Scalability considerations
+
+**Documentation:**
 - [ ] AI Chat architecture decisions
 - [ ] System design doc started
+- [ ] Architecture diagrams
 
 **Project:**
 - [ ] AI Chat: Core LLM integration (OpenAI, Anthropic, Gemini)
@@ -364,12 +518,14 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 **LeetCode:**
 - [ ] 7 hard (Backtracking)
 
-**Prep:**
+**Behavioral Prep:**
 - [ ] STAR stories documented (Nike, eBay, blockchain)
 
 ---
 
 ### Week 12: Mock Interviews Begin (18 hours)
+
+#### Interview Preparation
 
 **STAR Stories:**
 - [ ] Technical challenge story
@@ -383,9 +539,12 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Practice explaining projects
 - [ ] Practice system design whiteboarding
 
+#### Android Framework Topics
+
 **Project:**
 - [ ] AI Chat: Voice integration (STT + ElevenLabs TTS)
 - [ ] AI Chat: Streaming responses working
+- [ ] AI Chat: Testing voice features
 
 **LeetCode:**
 - [ ] 7 hard (timed practice, 45 min each)
@@ -396,17 +555,28 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 13: Advanced Testing + CI (15 hours)
 
-**Testing:**
+#### Kotlin Language Topics
+
+**Advanced Testing Patterns:**
+- [ ] Test double strategies (fake vs mock)
+- [ ] Builder pattern for test data
+- [ ] Test fixtures
+
+#### Android Framework Topics
+
+**Advanced Testing:**
 - [ ] Screenshot tests (Paparazzi/Roborazzi)
 - [ ] Espresso integration tests
-- [ ] Test double strategies (fake vs mock)
 - [ ] Turbine for Flow testing
+- [ ] Testing navigation
+- [ ] Testing animations
 
 **CI/CD:**
 - [ ] GitHub Actions matrix builds
 - [ ] Automated tests on PR
 - [ ] Lint + detekt checks
 - [ ] Code coverage reports
+- [ ] Automated releases
 
 **Project:**
 - [ ] AI Chat: 80%+ test coverage
@@ -419,17 +589,27 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 14: Security + Best Practices (18 hours)
 
+#### Android Framework Topics
+
 **Security:**
 - [ ] API key security (BuildConfig, not hardcoded)
 - [ ] Authentication flows (OAuth, JWT)
 - [ ] SSL pinning
 - [ ] Encrypted storage (Room, SharedPrefs)
+- [ ] Network security config
+- [ ] SafetyNet / Play Integrity API
 
 **Best Practices:**
-- [ ] ProGuard rules
+- [ ] ProGuard/R8 rules
 - [ ] Code obfuscation
 - [ ] Remove debug logs in release
 - [ ] Security audit checklist
+- [ ] OWASP Mobile Top 10
+
+**Code Quality:**
+- [ ] Architecture best practices
+- [ ] Code review guidelines
+- [ ] Documentation standards
 
 **Project:**
 - [ ] AI Chat: Security hardening
@@ -442,15 +622,25 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 15: System Design Mastery (20 hours)
 
+#### Android System Design Topics
+
 **Practice More Designs:**
 - [ ] Netflix video player (streaming, offline)
 - [ ] Twitter timeline (pagination, real-time)
 - [ ] Medium reading app (offline, sync)
 - [ ] Spotify music player (audio, background)
 
+**System Design Deep Dives:**
+- [ ] Caching strategies (LRU, TTL)
+- [ ] Pagination patterns
+- [ ] Real-time sync mechanisms
+- [ ] Media streaming architecture
+- [ ] Background processing strategies
+
 **Documentation:**
 - [ ] AI Chat: System design doc complete
 - [ ] Architecture diagrams (draw.io)
+- [ ] Trade-offs documentation
 
 **LeetCode:**
 - [ ] 7 company-tagged (Google, Meta, Amazon)
@@ -458,6 +648,8 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 ---
 
 ### Week 16: Interview Bootcamp (20 hours)
+
+#### Interview Preparation
 
 **Mock Interviews:**
 - [ ] Mock interview 3: Behavioral
@@ -468,6 +660,18 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 **Android Flashcards:**
 - [ ] Review 100+ Android flashcards
 - [ ] Practice explaining out loud
+- [ ] Activity lifecycle
+- [ ] Architecture patterns (MVVM, MVI, Clean)
+- [ ] Jetpack components
+- [ ] Compose fundamentals
+
+#### Android Framework Topics
+
+**Interview Topics Review:**
+- [ ] Common Android interview questions
+- [ ] Architecture explanations
+- [ ] Performance optimization techniques
+- [ ] Security best practices
 
 **Project:**
 - [ ] AI Chat: Complete and publish to GitHub
@@ -483,21 +687,31 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ### Week 17-20: Application + Interviews
 
+#### Interview Preparation
+
 **Resume:**
 - [ ] Resume updated with 3 projects
 - [ ] LinkedIn profile optimized
 - [ ] Portfolio links added
+- [ ] GitHub README polished
 
 **Applications:**
 - [ ] 15 applications (Week 17)
 - [ ] 30-40 total applications
 - [ ] Track in spreadsheet
+- [ ] Follow up with recruiters
 
 **Interview Prep:**
 - [ ] Daily LeetCode (1 problem maintenance)
 - [ ] Weekly system design review
 - [ ] STAR stories rehearsal
 - [ ] Mock interviews 2x/week
+
+**Android Interview Maintenance:**
+- [ ] Review Android fundamentals weekly
+- [ ] Stay current with latest Android news
+- [ ] Practice explaining projects clearly
+- [ ] Review architecture decisions
 
 **LeetCode:**
 - [ ] Maintain 180-200 problems
@@ -507,12 +721,29 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 ## Completion Tracking
 
 **By end of each month, you should have checked off:**
-- **Month 1:** All Kotlin, MVVM, Compose basics + ElevenLabs SDK
-- **Month 2:** Clean Arch, multi-module, Midnight Wallet complete
-- **Month 3:** Advanced topics, AI Chat in progress, mock interviews started
-- **Month 4:** AI Chat complete, 150+ LeetCode, interview-ready
-- **Month 5-6:** Active interviews, 200 LeetCode complete
+- **Month 1:**
+  - Kotlin: Scope functions, null safety, coroutines basics, Flow basics
+  - Android: Activity lifecycle, ViewBinding, Room, Navigation, Compose fundamentals
+  - Project: ElevenLabs SDK in progress
+- **Month 2:**
+  - Kotlin: Advanced coroutines, structured concurrency, advanced Flow
+  - Android: Clean Architecture, multi-module, Hilt, testing, security
+  - Project: Midnight Wallet complete
+- **Month 3:**
+  - Kotlin: Performance optimization, advanced patterns
+  - Android: Profiling, custom views, WorkManager, system design practice
+  - Project: AI Chat in progress, mock interviews started
+- **Month 4:**
+  - Android: Advanced testing, security best practices, CI/CD mastery
+  - System Design: 8 Android app designs practiced
+  - Project: AI Chat complete, 150+ LeetCode, interview-ready
+- **Month 5-6:**
+  - Active interviews, 200 LeetCode complete
 
 ---
 
-**Use this checklist weekly to ensure you're covering all critical Android topics. Check off items as you master them, not just as you read about them.**
+**Use this checklist weekly to ensure you're covering all critical topics:**
+- **Kotlin topics** = Language features, syntax, patterns
+- **Android topics** = Framework, architecture, tooling, best practices
+
+**Check off items as you master them, not just as you read about them.**
