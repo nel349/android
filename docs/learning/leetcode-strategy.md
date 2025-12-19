@@ -29,7 +29,7 @@ Your structured path to solving 200 problems in 6 months and crushing FAANG codi
 
 **Week 1 (7 easy): Arrays & Strings**
 - ~~Two Sum~~, ~~Valid Anagram~~, ~~Group Anagrams~~
-- ~~Best Time to Buy/Sell Stock~~, Contains Duplicate
+- ~~Best Time to Buy/Sell Stock~~, ~~Contains Duplicate~~
 - Valid Palindrome, Longest Substring Without Repeating
 
 **Patterns:** Hash maps, two pointers, sliding window basics
