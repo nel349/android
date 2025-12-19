@@ -8,6 +8,18 @@
 
 ---
 
+## 📊 Current Progress
+
+**Week 1: COMPLETED ✅**
+- ✅ Kotlin: Scope functions, null safety, lateinit/lazy, coroutines, Flow
+- ✅ Android: Activity lifecycle, ViewBinding, ConstraintLayout, Retrofit
+- ✅ Project: Weather app (OpenWeatherMap API, StateFlow, Coroutines)
+- ⏳ LeetCode: 0/7 (Start practicing Arrays & Strings!)
+
+**Next Up: Week 2** - MVVM + Components (Room, Navigation, Fragments)
+
+---
+
 ## Deep Dive Resources
 - **Learning Resources:** [docs/learning/resources.md](docs/learning/resources.md)
 - **Interview Prep:** [docs/learning/interview-prep.md](docs/learning/interview-prep.md)

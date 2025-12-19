@@ -31,63 +31,63 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] When to use each
 
 **Coroutines Basics:**
-- [ ] `launch` (fire-and-forget, returns Job)
-- [ ] `async` (returns Deferred with result)
-- [ ] Dispatchers: `Main`, `IO`, `Default`
-- [ ] `suspend` functions
-- [ ] `CoroutineScope` vs `GlobalScope`
+- [x] `launch` (fire-and-forget, returns Job) ✅ Used in MainActivity
+- [x] `async` (returns Deferred with result) ⚠️ Explained but not used
+- [x] Dispatchers: `Main`, `IO`, `Default` ✅ Used Dispatchers.IO
+- [x] `suspend` functions ✅ Used extensively
+- [ ] `CoroutineScope` vs `GlobalScope` ⚠️ Mentioned but not deeply covered
 
 **Flow Basics:**
-- [ ] What is Flow (cold asynchronous stream)
-- [ ] StateFlow (hot, always has value)
-- [ ] SharedFlow (hot, configurable replay)
-- [ ] `collect` vs `collectLatest`
+- [ ] What is Flow (cold asynchronous stream) ⚠️ Not covered - only used StateFlow
+- [x] StateFlow (hot, always has value) ✅ Used for UI state
+- [ ] SharedFlow (hot, configurable replay) ❌ Not covered
+- [ ] `collect` vs `collectLatest` ⚠️ Mentioned briefly, not demonstrated
 
 #### Android Framework Topics
 
 **Activity Lifecycle:**
-- [ ] Activity lifecycle methods (onCreate, onStart, onResume, onPause, onStop, onDestroy)
-- [ ] Configuration changes (screen rotation)
-- [ ] Saving state (onSaveInstanceState, Bundle)
+- [x] Activity lifecycle methods (onCreate, onStart, onResume, onPause, onStop, onDestroy) ✅ Implemented with logging
+- [ ] Configuration changes (screen rotation) ❌ Not tested/handled
+- [ ] Saving state (onSaveInstanceState, Bundle) ❌ Not covered
 
 **Layouts & Views (XML-based):**
-- [ ] ConstraintLayout (modern, flexible layout)
-- [ ] LinearLayout basics
-- [ ] RecyclerView fundamentals
-- [ ] ViewBinding (replace findViewById)
-- [ ] Understanding View hierarchy
+- [x] ConstraintLayout (modern, flexible layout) ✅ Built full layout
+- [ ] LinearLayout basics ❌ Not used
+- [ ] RecyclerView fundamentals ❌ Not covered
+- [x] ViewBinding (replace findViewById) ✅ Used extensively
+- [x] Understanding View hierarchy ✅ Covered through layout building
 
 **Android Manifest:**
-- [ ] INTERNET permission
-- [ ] Application configuration
-- [ ] Activity declarations
+- [x] INTERNET permission
+- [x] Application configuration
+- [x] Activity declarations
 
 **Resources System:**
-- [ ] strings.xml (externalize strings)
-- [ ] colors.xml, dimens.xml
-- [ ] Resource qualifiers (different screen sizes)
+- [x] strings.xml (externalize strings)
+- [x] colors.xml, dimens.xml
+- [x] Resource qualifiers (different screen sizes)
 
 **Context:**
-- [ ] Application context vs Activity context
-- [ ] When to use each
+- [x] Application context vs Activity context
+- [x] When to use each
 
 **Gradle Basics:**
-- [ ] build.gradle (app level vs project level)
-- [ ] Adding dependencies (Retrofit, Gson, etc.)
-- [ ] minSdk, targetSdk, compileSdk
+- [x] build.gradle (app level vs project level)
+- [x] Adding dependencies (Retrofit, Gson, etc.)
+- [x] minSdk, targetSdk, compileSdk
 
 **Debugging:**
-- [ ] Logcat basics
-- [ ] Breakpoints in Android Studio
+- [x] Logcat basics
+- [x] Breakpoints in Android Studio
 
 **Project:**
-- [ ] Weather app mini-project started
-- [ ] OpenWeatherMap API integrated
-- [ ] Retrofit setup
-- [ ] Flow for data streaming
+- [x] Weather app mini-project started
+- [x] OpenWeatherMap API integrated
+- [x] Retrofit setup
+- [x] Flow for data streaming
 
 **LeetCode:**
-- [ ] 7 easy problems (Arrays & Strings)
+- [ ] 7 easy problems (Arrays & Strings) - **TODO: Start practicing!**
 
 ---
 

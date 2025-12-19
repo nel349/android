@@ -28,6 +28,6 @@ interface WeatherApiService {
 
     companion object {
         const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
-        const val API_KEY = "7cefa9a5e3afb9ad318b9469333a4aad"
+        // API_KEY is now accessed via BuildConfig.WEATHER_API_KEY
     }
 }

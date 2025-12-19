@@ -1,8 +1,8 @@
 package com.norman.weatherapp.data.repository
 
 import android.util.Log
+import com.norman.weatherapp.BuildConfig
 import com.norman.weatherapp.data.api.RetrofitInstance
-import com.norman.weatherapp.data.api.WeatherApiService
 import com.norman.weatherapp.data.model.WeatherData
 import com.norman.weatherapp.data.model.toWeatherData
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +38,7 @@ class WeatherRepository {
                 // This is where the coroutine "pauses" and waits
                 val response = api.getWeather(
                     city = city,
-                    apiKey = WeatherApiService.API_KEY
+                    apiKey = BuildConfig.WEATHER_API_KEY
                 )
 
                 Log.d(TAG, "Weather fetched successfully: ${response.cityName}")
