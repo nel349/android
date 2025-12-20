@@ -14,9 +14,11 @@
 - ✅ Kotlin: Scope functions, null safety, lateinit/lazy, coroutines, Flow
 - ✅ Android: Activity lifecycle, ViewBinding, ConstraintLayout, Retrofit
 - ✅ Project: Weather app (OpenWeatherMap API, StateFlow, Coroutines)
-- ⏳ LeetCode: 0/7 (Start practicing Arrays & Strings!)
+- ✅ LeetCode: 7/7 Arrays & Strings complete!
 
-**Next Up: Week 2** - MVVM + Components (Room, Navigation, Fragments)
+**Week 2: IN PROGRESS** - MVVM + Components (Room, Navigation, Fragments)
+- 🎯 Goal: Add ViewModel, Room database, offline-first architecture
+- 🎯 LeetCode: 7 problems (HashMaps, Two Pointers)
 
 ---
 

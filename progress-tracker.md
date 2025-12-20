@@ -17,7 +17,7 @@ Track your weekly progress here. Check off tasks as you complete them.
 - [ ] Phase 3: Polish & README (Week 5)
 - [ ] Phase 4: GitHub published ✅
 
-**Leetcode:** 0/28 (Month 1 target) - Start practicing!
+**Leetcode:** 7/28 (Month 1 target) ✅ Week 1 complete!
 
 ---
 
