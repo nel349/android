@@ -3,14 +3,13 @@ package com.norman.weatherapp
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.norman.weatherapp.data.model.WeatherData
 import com.norman.weatherapp.data.repository.Result
-import com.norman.weatherapp.data.repository.WeatherRepository
 import com.norman.weatherapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -18,15 +17,10 @@ class MainActivity : AppCompatActivity() {
     // ViewBinding - lateinit means we'll initialize it later (before use)
     private lateinit var binding: ActivityMainBinding
 
-    // Repository instance
-    private val repository = WeatherRepository()
-
-    // StateFlow - Hot flow that always has a value
-    // MutableStateFlow = can change value (private, only we can modify)
-    // StateFlow = read-only (public, others can observe)
-    // Start with Idle state (not Loading - nothing happening yet!)
-    private val _weatherState = MutableStateFlow<Result<WeatherData>>(Result.Idle)
-    val weatherState: StateFlow<Result<WeatherData>> = _weatherState
+    // ViewModel - survives configuration changes!
+    // by viewModels() delegate automatically creates/retrieves ViewModel
+    // On rotation: same ViewModel instance is returned
+    private val viewModel: WeatherViewModel by viewModels()
 
     companion object {
         private const val TAG = "MainActivity"  // Tag for Logcat filtering
@@ -82,27 +76,23 @@ class MainActivity : AppCompatActivity() {
 
             val cityName = binding.cityInput.text.toString().trim()
 
-            if (cityName.isEmpty()) {
-                // Show error immediately
-                _weatherState.value = Result.Error(getString(R.string.empty_city_error))
-            } else {
-                // Fetch weather using coroutines
-                fetchWeather(cityName)
-            }
+            // Call ViewModel (validation happens inside ViewModel)
+            viewModel.fetchWeather(cityName)
         }
     }
 
     // ========== COROUTINES & FLOW ==========
 
     /**
-     * Observe StateFlow and update UI based on state changes
+     * Observe ViewModel's StateFlow and update UI based on state changes
      * Uses lifecycleScope.launch - automatically cancelled when Activity dies
+     * ViewModel survives rotation, but this observer is recreated
      */
     private fun observeWeatherState() {
         lifecycleScope.launch {
-            // collect = listens to StateFlow emissions
-            // This suspends and collects values forever (until scope is cancelled)
-            weatherState.collect { result ->
+            // Observe ViewModel's StateFlow
+            // On rotation: new Activity observes same ViewModel's StateFlow
+            viewModel.weatherState.collect { result ->
                 Log.d(TAG, "Weather state changed: $result")
 
                 when (result) {
@@ -112,26 +102,6 @@ class MainActivity : AppCompatActivity() {
                     is Result.Error -> showError(result.message)
                 }
             }
-        }
-    }
-
-    /**
-     * Fetch weather data using coroutines
-     * lifecycleScope.launch - tied to Activity lifecycle
-     */
-    private fun fetchWeather(city: String) {
-        lifecycleScope.launch {  // Launch coroutine on Main thread
-            Log.d(TAG, "Fetching weather for: $city")
-
-            // Update state to Loading
-            _weatherState.value = Result.Loading
-
-            // Call repository (suspend function)
-            // Repository switches to Dispatchers.IO internally
-            val result = repository.getWeather(city)
-
-            // Back on Main thread automatically
-            _weatherState.value = result
         }
     }
 
