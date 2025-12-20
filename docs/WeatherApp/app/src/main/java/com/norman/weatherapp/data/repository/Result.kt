@@ -17,7 +17,12 @@ sealed class Result<out T> {
     data class Error(val message: String) : Result<Nothing>()
 
     /**
-     * Loading state (no data yet)
+     * Loading state (operation in progress)
      */
     data object Loading : Result<Nothing>()
+
+    /**
+     * Idle state (no operation started yet)
+     */
+    data object Idle : Result<Nothing>()
 }

@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity() {
     // StateFlow - Hot flow that always has a value
     // MutableStateFlow = can change value (private, only we can modify)
     // StateFlow = read-only (public, others can observe)
-    private val _weatherState = MutableStateFlow<Result<WeatherData>>(Result.Loading)
+    // Start with Idle state (not Loading - nothing happening yet!)
+    private val _weatherState = MutableStateFlow<Result<WeatherData>>(Result.Idle)
     val weatherState: StateFlow<Result<WeatherData>> = _weatherState
 
     companion object {
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Weather state changed: $result")
 
                 when (result) {
+                    is Result.Idle -> showIdle()
                     is Result.Loading -> showLoading()
                     is Result.Success -> showWeather(result.data)
                     is Result.Error -> showError(result.message)
@@ -134,6 +136,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ========== UI UPDATE METHODS ==========
+
+    private fun showIdle() {
+        Log.d(TAG, "Showing idle state (waiting for user input)")
+        binding.loadingProgressBar.visibility = View.GONE
+        binding.weatherCard.visibility = View.GONE
+        binding.errorText.visibility = View.GONE
+    }
 
     private fun showLoading() {
         Log.d(TAG, "Showing loading state")
