@@ -16,9 +16,14 @@
 - ✅ Project: Weather app (OpenWeatherMap API, StateFlow, Coroutines)
 - ✅ LeetCode: 7/7 Arrays & Strings complete!
 
-**Week 2: IN PROGRESS** - MVVM + Components (Room, Navigation, Fragments)
-- 🎯 Goal: Add ViewModel, Room database, offline-first architecture
-- 🎯 LeetCode: 7 problems (HashMaps, Two Pointers)
+**Week 2: 60% COMPLETE (PAUSED)** - MVVM + Components
+- ✅ ViewModel (survives rotation, viewModelScope)
+- ✅ Room Database (offline-first, Entity, DAO, @Volatile, synchronized)
+- ✅ Offline caching working perfectly
+- ⏸️ **PAUSED** - Fragments + Navigation remaining
+- 🎯 LeetCode: 0/7 Week 2 target (do when ready)
+
+**When you return: Continue Week 2** - Add Fragments + Navigation for multi-screen app
 
 ---
 

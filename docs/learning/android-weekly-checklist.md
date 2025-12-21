@@ -87,7 +87,7 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] Flow for data streaming
 
 **LeetCode:**
-- [ ] 7 easy problems (Arrays & Strings) - **TODO: Start practicing!**
+- [x] 7 easy problems (Arrays & Strings) ✅ **COMPLETED**
 
 ---
 
@@ -96,29 +96,29 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 #### Kotlin Language Topics
 
 **LiveData vs Flow:**
-- [ ] Flow (more flexible, Kotlin-first)
-- [ ] StateFlow for UI state
-- [ ] When to use Flow vs LiveData
+- [x] Flow (more flexible, Kotlin-first) ✅ Already using extensively
+- [x] StateFlow for UI state ✅ Used in ViewModel
+- [x] When to use Flow vs LiveData ✅ Discussed: StateFlow is modern replacement
 
 #### Android Framework Topics
 
 **ViewModel:**
-- [ ] What is ViewModel (survives config changes)
-- [ ] `viewModelScope` for coroutines
-- [ ] ViewModel lifecycle
-- [ ] ViewModel factories (if needed)
+- [x] What is ViewModel (survives config changes) ✅ Implemented WeatherViewModel
+- [x] `viewModelScope` for coroutines ✅ Used for fetchWeather()
+- [x] ViewModel lifecycle ✅ Tested with screen rotation
+- [ ] ViewModel factories (if needed) ⏳ Will cover with Hilt in Week 3
 
 **LiveData:**
-- [ ] LiveData (lifecycle-aware, UI only)
-- [ ] Observing LiveData in Activity/Fragment
-- [ ] LiveData transformations
+- [ ] LiveData (lifecycle-aware, UI only) ⚠️ Skipping - using StateFlow instead
+- [ ] Observing LiveData in Activity/Fragment ⚠️ Skipping - using StateFlow instead
+- [ ] LiveData transformations ⚠️ Skipping - using Flow operators instead
 
 **Room Database:**
-- [ ] Entities (`@Entity`, `@PrimaryKey`)
-- [ ] DAOs (`@Dao`, `@Query`, `@Insert`, `@Update`, `@Delete`)
-- [ ] Database class (`@Database`)
-- [ ] Migrations (basic understanding)
-- [ ] Type converters
+- [x] Entities (`@Entity`, `@PrimaryKey`) ✅ Created WeatherEntity
+- [x] DAOs (`@Dao`, `@Query`, `@Insert`, `@Update`, `@Delete`) ✅ Created WeatherDao with queries
+- [x] Database class (`@Database`) ✅ Created WeatherDatabase with singleton pattern
+- [x] Migrations (basic understanding) ✅ Learned fallbackToDestructiveMigration
+- [ ] Type converters ⏳ Not needed yet (will cover when needed)
 
 **Navigation Component:**
 - [ ] NavHost and NavController
@@ -133,13 +133,13 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Fragment arguments (Bundle)
 
 **Project:**
-- [ ] Weather app: Add MVVM architecture
-- [ ] Weather app: Add Room caching (offline-first)
-- [ ] Weather app: Multi-screen (list + detail)
-- [ ] Weather app: Navigation Component
+- [x] Weather app: Add MVVM architecture ✅ ViewModel implemented, rotation tested
+- [x] Weather app: Add Room caching (offline-first) ✅ Offline functionality working
+- [ ] Weather app: Multi-screen (list + detail) ⏳ Next up
+- [ ] Weather app: Navigation Component ⏳ Next up
 
 **LeetCode:**
-- [ ] 7 easy-medium mix (HashMaps, Two Pointers)
+- [ ] 7 easy-medium mix (HashMaps, Two Pointers) ⏳ Week 2 target
 
 ---
 
