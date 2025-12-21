@@ -1,8 +1,10 @@
 package com.norman.weatherapp.ui.viewmodel
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.norman.weatherapp.data.local.WeatherDatabase
 import com.norman.weatherapp.data.model.WeatherData
 import com.norman.weatherapp.data.repository.Result
 import com.norman.weatherapp.data.repository.WeatherRepository
@@ -12,6 +14,11 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel for Weather screen
+ *
+ * WHY ANDROIDVIEWMODEL?
+ * - Extends AndroidViewModel (instead of ViewModel) to get Application context
+ * - Needed to create Room database (requires context)
+ * - In Week 3, we'll use Hilt for dependency injection (better approach)
  *
  * WHY VIEWMODEL?
  * - Survives configuration changes (screen rotation)
@@ -24,10 +31,15 @@ import kotlinx.coroutines.launch
  * - StateFlow: Hot flow for UI state (like LiveData but better)
  * - ViewModel is NOT destroyed on rotation!
  */
-class WeatherViewModel : ViewModel() {
+class WeatherViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Repository instance (in real app, would be injected via Hilt)
-    private val repository = WeatherRepository()
+    // Get Room database and DAO
+    private val database = WeatherDatabase.getDatabase(application)
+    private val weatherDao = database.weatherDao()
+
+    // Repository instance with Room caching
+    // (In Week 3, Hilt will inject this automatically)
+    private val repository = WeatherRepository(weatherDao)
 
     // StateFlow - UI state
     // Private mutable version (only ViewModel can modify)
