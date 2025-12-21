@@ -48,6 +48,10 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     // Public read-only version (Activity/Fragment observes this)
     val weatherState: StateFlow<Result<WeatherData>> = _weatherState
 
+    // Flow of all cached cities (for CityListFragment)
+    // Directly exposed from DAO - automatically updates when data changes
+    val cachedCities = weatherDao.getAllWeather()
+
     companion object {
         private const val TAG = "WeatherViewModel"
     }

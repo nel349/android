@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp") version "2.0.21-1.0.28"  // KSP for Room (matches Kotlin 2.0.21)
+    id("androidx.navigation.safeargs.kotlin") version "2.7.6"  // SafeArgs for type-safe navigation
 }
 
 // Load local.properties
@@ -15,9 +16,7 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "com.norman.weatherapp"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.norman.weatherapp"
@@ -86,6 +85,14 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")  // Coroutines support
     ksp("androidx.room:room-compiler:$roomVersion")       // Annotation processor (KSP)
+
+    // Navigation Component
+    val navVersion = "2.7.6"
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+
+    // Fragment
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

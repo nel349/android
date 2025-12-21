@@ -11,9 +11,11 @@
     <!-- Actions -->
     <string name="fetch_weather_button">Get Weather</string>
     <string name="city_hint">Enter city name</string>
+    <string name="search_city">Search for a city</string>
 
     <!-- Messages -->
     <string name="loading_message">Loading weather data…</string>
     <string name="error_message">Failed to fetch weather. Please try again.</string>
     <string name="empty_city_error">Please enter a city name</string>
+    <string name="cached_cities">Cached Cities</string>
 </resources>

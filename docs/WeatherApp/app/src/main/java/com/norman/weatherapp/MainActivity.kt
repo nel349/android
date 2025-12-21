@@ -2,152 +2,49 @@ package com.norman.weatherapp
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.norman.weatherapp.data.model.WeatherData
-import com.norman.weatherapp.data.repository.Result
 import com.norman.weatherapp.databinding.ActivityMainBinding
-import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
-import kotlinx.coroutines.launch
 
+/**
+ * MainActivity - NavHost container for fragments
+ *
+ * SIMPLIFIED ROLE:
+ * - Before: Contained all weather UI logic
+ * - After: Just hosts NavHostFragment (container for fragments)
+ *
+ * FRAGMENTS PATTERN:
+ * - MainActivity = Container (minimal logic)
+ * - Fragments = Actual screens with UI logic
+ * - Navigation Component = Manages fragment swapping
+ *
+ * Benefits:
+ * - Reusable fragments
+ * - Better separation of concerns
+ * - Easier testing
+ * - Modern Android architecture
+ */
 class MainActivity : AppCompatActivity() {
 
-    // ViewBinding - lateinit means we'll initialize it later (before use)
     private lateinit var binding: ActivityMainBinding
 
-    // ViewModel - survives configuration changes!
-    // by viewModels() delegate automatically creates/retrieves ViewModel
-    // On rotation: same ViewModel instance is returned
-    private val viewModel: WeatherViewModel by viewModels()
-
     companion object {
-        private const val TAG = "MainActivity"  // Tag for Logcat filtering
+        private const val TAG = "MainActivity"
     }
-
-    // ========== ACTIVITY LIFECYCLE METHODS ==========
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate() called")
 
-        // Initialize ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)  // Sets the root view
+        setContentView(binding.root)
 
-        // Setup UI listeners
-        setupClickListeners()
-
-        // Observe StateFlow for UI updates
-        observeWeatherState()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart() called - Activity becoming visible")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume() called - Activity in foreground, user can interact")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause() called - Activity losing focus (e.g., dialog appears)")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop() called - Activity no longer visible")
+        // That's it! NavHostFragment handles everything else
+        // Fragment lifecycle, navigation, back stack - all automatic
+        Log.d(TAG, "NavHostFragment loaded, navigation ready")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy() called - Activity being destroyed")
-    }
-
-    // ========== UI SETUP ==========
-
-    private fun setupClickListeners() {
-        binding.fetchWeatherButton.setOnClickListener {
-            Log.d(TAG, "Fetch Weather button clicked")
-
-            val cityName = binding.cityInput.text.toString().trim()
-
-            // Call ViewModel (validation happens inside ViewModel)
-            viewModel.fetchWeather(cityName)
-        }
-    }
-
-    // ========== COROUTINES & FLOW ==========
-
-    /**
-     * Observe ViewModel's StateFlow and update UI based on state changes
-     * Uses lifecycleScope.launch - automatically cancelled when Activity dies
-     * ViewModel survives rotation, but this observer is recreated
-     */
-    private fun observeWeatherState() {
-        lifecycleScope.launch {
-            // Observe ViewModel's StateFlow
-            // On rotation: new Activity observes same ViewModel's StateFlow
-            viewModel.weatherState.collect { result ->
-                Log.d(TAG, "Weather state changed: $result")
-
-                when (result) {
-                    is Result.Idle -> showIdle()
-                    is Result.Loading -> showLoading()
-                    is Result.Success -> showWeather(result.data)
-                    is Result.Error -> showError(result.message)
-                }
-            }
-        }
-    }
-
-    // ========== UI UPDATE METHODS ==========
-
-    private fun showIdle() {
-        Log.d(TAG, "Showing idle state (waiting for user input)")
-        binding.loadingProgressBar.visibility = View.GONE
-        binding.weatherCard.visibility = View.GONE
-        binding.errorText.visibility = View.GONE
-    }
-
-    private fun showLoading() {
-        Log.d(TAG, "Showing loading state")
-        binding.loadingProgressBar.visibility = View.VISIBLE
-        binding.weatherCard.visibility = View.GONE
-        binding.errorText.visibility = View.GONE
-    }
-
-    private fun showWeather(data: WeatherData) {
-        Log.d(TAG, "Showing weather: $data")
-
-        // Hide loading and error
-        binding.loadingProgressBar.visibility = View.GONE
-        binding.errorText.visibility = View.GONE
-
-        // Show weather card
-        binding.weatherCard.visibility = View.VISIBLE
-
-        // Update UI with data
-        binding.cityNameText.text = data.cityName
-        binding.temperatureText.text = data.getFormattedTemperature()
-        binding.descriptionText.text = data.description.replaceFirstChar { it.uppercase() }
-        binding.humidityText.text = data.getFormattedHumidity()
-        binding.windSpeedText.text = data.getFormattedWindSpeed()
-    }
-
-    private fun showError(message: String) {
-        Log.e(TAG, "Showing error: $message")
-
-        // Hide loading and weather card
-        binding.loadingProgressBar.visibility = View.GONE
-        binding.weatherCard.visibility = View.GONE
-
-        // Show error
-        binding.errorText.visibility = View.VISIBLE
-        binding.errorText.text = message
+        Log.d(TAG, "onDestroy() called")
     }
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/cityListFragment">
+
+    <!--
+    NAVIGATION GRAPH - Visual map of app screens
+
+    CONCEPTS:
+    - Each <fragment> is a destination (screen)
+    - startDestination = First screen users see
+    - <action> = Navigation path from one screen to another
+    - android:name = Fully qualified class name of Fragment
+    -->
+
+    <!-- City List Screen (Start destination) -->
+    <fragment
+        android:id="@+id/cityListFragment"
+        android:name="com.norman.weatherapp.ui.fragments.CityListFragment"
+        android:label="Cached Cities"
+        tools:layout="@layout/fragment_city_list">
+
+        <!-- Action to navigate to Weather Detail -->
+        <action
+            android:id="@+id/action_cityList_to_weatherDetail"
+            app:destination="@id/weatherDetailFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <!-- Weather Detail Screen -->
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.norman.weatherapp.ui.fragments.WeatherDetailFragment"
+        android:label="Weather Details"
+        tools:layout="@layout/fragment_weather_detail">
+
+        <!-- Argument: City name passed from CityList -->
+        <argument
+            android:name="cityName"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
+</navigation>
