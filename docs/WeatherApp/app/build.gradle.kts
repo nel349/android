@@ -133,4 +133,7 @@ dependencies {
 
     // Coroutines test for instrumented tests
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // UIAutomator (for programmatic animation control - optional)
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
 }
