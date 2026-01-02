@@ -94,7 +94,30 @@ dependencies {
     // Fragment
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
+    // Testing dependencies
     testImplementation(libs.junit)
+
+    // MockK - Kotlin-friendly mocking library
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk-android:1.13.8")
+
+    // Turbine - Flow testing library
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
+    // Coroutines Test - for testing suspend functions
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // Robolectric - Android unit tests without emulator
+    testImplementation("org.robolectric:robolectric:4.11.1")
+
+    // AndroidX Test - Core testing utilities
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+
+    // Arch Core Testing - InstantTaskExecutorRule for LiveData/ViewModel
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
