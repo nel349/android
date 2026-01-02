@@ -13,11 +13,16 @@ import com.norman.weatherapp.ui.fragments.CityListFragment
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
  * CityListFragment Instrumented Tests WITHOUT Dependency Injection
+ *
+ * NOTE: This test is DISABLED because ViewModel now uses Hilt (@Inject constructor).
+ * See CityListFragmentTestWithHilt.kt for the working version with Hilt.
+ * This file is kept for reference to show the pain points without DI.
  *
  * PAIN POINTS YOU'LL SEE:
  * 1. Uses REAL on-disk database (persists between tests)
@@ -30,6 +35,7 @@ import org.junit.runner.RunWith
  *
  * After we add Hilt, you'll see how to use in-memory database and fake repositories!
  */
+@Ignore("Disabled - ViewModel now requires Hilt. See CityListFragmentTestWithHilt instead.")
 @RunWith(AndroidJUnit4::class)
 class CityListFragmentTest {
 

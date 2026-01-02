@@ -154,32 +154,38 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 #### Kotlin Language Topics
 
 **Testing:**
-- [ ] JUnit basics (`@Test`, assertions)
-- [ ] MockK (mocking dependencies)
-- [ ] Turbine (testing Flow)
-- [ ] Coroutine testing (`runTest`, `TestDispatcher`)
+- [x] JUnit basics (`@Test`, assertions) ✅ Used in WeatherViewModelTest
+- [x] MockK (mocking dependencies) ✅ Added dependency, understand usage
+- [x] Turbine (testing Flow) ✅ Added dependency for Flow testing
+- [x] Coroutine testing (`runTest`, `TestDispatcher`) ✅ Used in unit tests
 
 #### Android Framework Topics
 
 **Hilt Dependency Injection:**
-- [ ] `@HiltAndroidApp` (Application class)
-- [ ] `@AndroidEntryPoint` (Activity, Fragment, ViewModel)
-- [ ] `@Module` (provide dependencies)
-- [ ] `@Provides` (instances you construct)
-- [ ] `@Binds` (interface to implementation)
-- [ ] `@Inject` (inject dependencies)
-- [ ] Scopes: `@Singleton`, `@ActivityScoped`, `@ViewModelScoped`
+- [x] `@HiltAndroidApp` (Application class) ✅ Created WeatherApplication
+- [x] `@AndroidEntryPoint` (Activity, Fragment, ViewModel) ✅ Added to MainActivity + both Fragments
+- [x] `@Module` (provide dependencies) ✅ Created DatabaseModule + NetworkModule
+- [x] `@Provides` (instances you construct) ✅ Used to provide Room database, Retrofit, DAOs, API service
+- [ ] `@Binds` (interface to implementation) ⏳ Not needed yet (no interfaces to bind)
+- [x] `@Inject` (inject dependencies) ✅ Used in Repository + ViewModel constructors
+- [x] Scopes: `@Singleton`, `@ActivityScoped`, `@ViewModelScoped` ✅ Used @Singleton for app-wide dependencies
+- [x] KSP setup with Hilt (modern annotation processing) ✅ Configured with version catalog
+- [x] Resolved JavaPoet dependency conflicts ✅ Added plugins to root build.gradle.kts with apply false
 
 **Android Testing:**
-- [ ] ViewModel testing (fake repository)
-- [ ] `InstantTaskExecutorRule` for LiveData
-- [ ] AndroidX Test library
-- [ ] Testing Room DAOs
+- [x] ViewModel testing without DI (demonstrate pain points) ✅ Created WeatherViewModelTest showing Robolectric necessity
+- [x] Fragment instrumented tests without DI (demonstrate pain points) ✅ Created CityListFragmentTest showing 8 pain points
+- [x] AndroidX Test library ✅ Added Fragment testing, Navigation testing, Espresso dependencies
+- [ ] ViewModel testing WITH Hilt (clean approach) ⏳ Next step
+- [ ] Fragment testing WITH Hilt (clean approach) ⏳ Next step
+- [ ] Testing Room DAOs ⏳ Not covered yet
 
 **Project:**
-- [ ] Weather app: Add Hilt
-- [ ] Weather app: ViewModel tests (80%+ coverage)
-- [ ] Weather app: Repository tests
+- [x] Weather app: Add Hilt ✅ Complete integration (Application, Modules, @Inject, @AndroidEntryPoint)
+- [x] Weather app: Refactor architecture for DI ✅ Repository pattern with single dependency in ViewModel
+- [ ] Weather app: Rewrite ViewModel tests WITH Hilt (see improvement) ⏳ Next
+- [ ] Weather app: Rewrite Fragment tests WITH Hilt (see improvement) ⏳ Next
+- [ ] Weather app: Repository tests ⏳ Not covered yet
 
 **ElevenLabs SDK:**
 - [ ] Start research (ElevenLabs API docs)

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Debug manifest - Activities here are only available in debug builds.
+        This is used for testing infrastructure.
+    -->
+
+    <application>
+        <!--
+            HiltTestActivity - Used for Hilt Fragment Testing
+
+            This activity is needed because:
+            - Hilt Fragments must be attached to @AndroidEntryPoint Activities
+            - launchFragmentInContainer() uses EmptyFragmentActivity which doesn't have @AndroidEntryPoint
+            - This custom activity has @AndroidEntryPoint and is used in instrumented tests
+        -->
+        <activity
+            android:name=".HiltTestActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

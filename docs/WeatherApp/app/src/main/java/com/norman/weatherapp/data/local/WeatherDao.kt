@@ -48,6 +48,14 @@ interface WeatherDao {
     fun getAllWeather(): Flow<List<WeatherEntity>>
 
     /**
+     * Get all cached cities as a one-shot query (for testing)
+     * Returns List directly instead of Flow
+     * Useful for verifying database state in tests
+     */
+    @Query("SELECT * FROM weather ORDER BY timestamp DESC")
+    suspend fun getAllWeatherOneShot(): List<WeatherEntity>
+
+    /**
      * Delete old cached data (optional cleanup)
      * Example: Delete entries older than 1 hour
      */

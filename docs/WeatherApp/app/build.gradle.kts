@@ -26,7 +26,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.norman.weatherapp.HiltTestRunner"
 
         // Build config field for API key from local.properties
         buildConfigField(
@@ -56,6 +56,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true  // Mock Android framework classes (Log, etc.)
     }
 }
 
@@ -131,22 +135,40 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // MockK for instrumented tests
+    androidTestImplementation("io.mockk:mockk-android:1.13.8") {
+        exclude(group = "org.junit.jupiter")
+    }
+
     // Fragment testing
-    debugImplementation("androidx.fragment:fragment-testing:1.6.2")
+    debugImplementation("androidx.fragment:fragment-testing:1.6.2") {
+        exclude(group = "org.junit.jupiter")
+    }
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.6.2")
 
     // Navigation testing
-    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6") {
+        exclude(group = "org.junit.jupiter")
+    }
 
     // Espresso Contrib (for RecyclerView testing)
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1") {
+        exclude(group = "org.junit.jupiter")
+    }
 
     // Coroutines test for instrumented tests
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") {
+        exclude(group = "org.junit.jupiter")
+    }
 
     // UIAutomator (for programmatic animation control - optional)
-    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0") {
+        exclude(group = "org.junit.jupiter")
+    }
 
     // Hilt Testing (for instrumented tests)
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51") {
+        exclude(group = "org.junit.jupiter")
+    }
     kspAndroidTest("com.google.dagger:hilt-compiler:2.51")
 }
