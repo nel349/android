@@ -1,33 +1,19 @@
 package com.norman.weatherapp
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import androidx.annotation.StyleRes
-import androidx.core.util.Preconditions
-import androidx.fragment.app.Fragment
-import androidx.room.Room
-import androidx.test.core.app.ActivityScenario
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.norman.weatherapp.data.api.WeatherApiService
 import com.norman.weatherapp.data.local.WeatherDatabase
 import com.norman.weatherapp.data.local.WeatherEntity
 import com.norman.weatherapp.di.DatabaseModule
 import com.norman.weatherapp.di.NetworkModule
 import com.norman.weatherapp.ui.fragments.CityListFragment
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
+import com.norman.weatherapp.utils.launchFragmentInHiltContainer
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -35,10 +21,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * CityListFragment Instrumented Tests WITH Hilt
+ *
+ * ARCHITECTURE:
+ * - Test class: Contains only test logic (this file)
+ * - Test DI modules: TestAppModule.kt (provides in-memory DB, fake API)
+ * - Test utilities: HiltFragmentTestUtils.kt (fragment launcher helper)
+ * - Test infrastructure: HiltTestRunner.kt, HiltTestActivity.kt
  *
  * IMPROVEMENTS YOU'LL SEE:
  * ✅ 1. Uses IN-MEMORY database (fast, doesn't persist)
@@ -49,42 +40,44 @@ import javax.inject.Singleton
  * ✅ 6. Reliable (no flakiness from network/state)
  * ✅ 7. Clean setup (Hilt handles dependency injection)
  * ✅ 8. Can test navigation (Hilt makes it easy)
+ * ✅ 9. Modular architecture (DI modules, utils in separate files)
  *
  * COMPARISON TO OLD TEST:
  * - Before: Real on-disk database → After: In-memory database (fast!)
  * - Before: Tests interfere with each other → After: Isolated tests
  * - Before: Manual setup/teardown → After: Hilt handles it
- * - Before: Can't mock API → After: Easy fake API
+ * - Before: Can't mock API → After: Easy fake API (see TestAppModule)
  * - Before: Can't test navigation → After: Easy with test modules
+ * - Before: Test helpers in test file → After: Reusable utils (HiltFragmentTestUtils)
+ *
+ * See also:
+ * - di/TestAppModule.kt - Test DI modules (database, network)
+ * - utils/HiltFragmentTestUtils.kt - Fragment testing utilities
  */
 @RunWith(AndroidJUnit4::class)
-@HiltAndroidTest  // IMPROVEMENT #1: Enable Hilt for testing
-@UninstallModules(DatabaseModule::class, NetworkModule::class)  // IMPROVEMENT #2: Replace production modules
+@HiltAndroidTest  // Enable Hilt for testing
+@UninstallModules(DatabaseModule::class, NetworkModule::class)  // Replace production modules with test modules
 class CityListFragmentTestWithHilt {
 
-    // IMPROVEMENT #3: HiltAndroidRule manages Hilt in tests
+    // HiltAndroidRule manages Hilt injection in tests
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
 
-    // IMPROVEMENT #4: Hilt injects test database
-    // This is the IN-MEMORY database from our test module!
+    // Hilt injects test database (in-memory, from TestAppModule)
     @Inject
     lateinit var database: WeatherDatabase
 
     @Before
     fun setup() {
-        // IMPROVEMENT #6: Inject dependencies
+        // Inject dependencies (database, etc.)
         hiltRule.inject()
-
-        // IMPROVEMENT #7: Database is already clean (new instance per test)
-        // No need to manually clear like before!
+        // Database is already clean (fresh in-memory instance per test)
     }
 
     @After
     fun tearDown() {
-        // IMPROVEMENT #8: Clean shutdown (no race conditions!)
+        // Close and clear in-memory database
         database.close()
-        // In-memory database is automatically cleared when closed
     }
 
     // ========== TESTS THAT NOW WORK BETTER ==========
@@ -253,116 +246,9 @@ class CityListFragmentTestWithHilt {
 }
 
 /**
- * Helper function to launch Fragment in Hilt-enabled container
- *
- * This is necessary because Hilt Fragments must be attached to @AndroidEntryPoint Activities.
- * Standard launchFragmentInContainer() uses EmptyFragmentActivity which doesn't have @AndroidEntryPoint.
- */
-inline fun <reified T : Fragment> launchFragmentInHiltContainer(
-    fragmentArgs: Bundle? = null,
-    @StyleRes themeResId: Int = R.style.Theme_WeatherApp,
-    crossinline action: Fragment.() -> Unit = {}
-) {
-    val startActivityIntent = Intent.makeMainActivity(
-        ComponentName(
-            ApplicationProvider.getApplicationContext(),
-            HiltTestActivity::class.java
-        )
-    ).putExtra(
-        "androidx.fragment.app.testing.FragmentScenario.EmptyFragmentActivity.THEME_EXTRAS_BUNDLE_KEY",
-        themeResId
-    )
-
-    ActivityScenario.launch<HiltTestActivity>(startActivityIntent).onActivity { activity ->
-        val fragment: Fragment = activity.supportFragmentManager.fragmentFactory.instantiate(
-            Preconditions.checkNotNull(T::class.java.classLoader),
-            T::class.java.name
-        )
-        fragment.arguments = fragmentArgs
-        activity.supportFragmentManager
-            .beginTransaction()
-            .add(android.R.id.content, fragment, "")
-            .commitNow()
-
-        fragment.action()
-    }
-}
-
-/**
- * TEST MODULE: Replaces production modules with test versions
- *
- * IMPROVEMENT #9: Provide test dependencies
- * - In-memory database (fast, isolated)
- * - Fake API service (no network calls)
- */
-@Module
-@InstallIn(SingletonComponent::class)
-object TestDatabaseModule {
-
-    /**
-     * IMPROVEMENT #10: Provide in-memory database
-     *
-     * BEFORE: Tests used real on-disk database
-     * AFTER: Each test gets a fresh in-memory database
-     *
-     * Benefits:
-     * - Fast (no disk I/O)
-     * - Isolated (no test interference)
-     * - Automatically cleared when closed
-     */
-    @Provides
-    @Singleton
-    fun provideInMemoryDatabase(
-        @dagger.hilt.android.qualifiers.ApplicationContext context: Context
-    ): WeatherDatabase {
-        return Room.inMemoryDatabaseBuilder(
-            context,
-            WeatherDatabase::class.java
-        )
-            .allowMainThreadQueries()  // For testing only!
-            .build()
-    }
-
-    @Provides
-    fun provideWeatherDao(database: WeatherDatabase) = database.weatherDao()
-}
-
-/**
- * TEST MODULE: Provides fake API service
- */
-@Module
-@InstallIn(SingletonComponent::class)
-object TestNetworkModule {
-
-    /**
-     * IMPROVEMENT #11: Provide fake API service
-     *
-     * BEFORE: Tests would make real API calls
-     * AFTER: Fake API service (returns error - safe for testing UI without network)
-     *
-     * This fake service prevents real network calls during UI tests.
-     * For tests that need to verify API responses, you could create
-     * a FakeWeatherApiService class that returns predefined data.
-     */
-    @Provides
-    @Singleton
-    fun provideFakeWeatherApiService(): WeatherApiService {
-        // Simple fake implementation that throws error if called
-        // This is safe because our UI tests don't trigger API calls
-        return object : WeatherApiService {
-            override suspend fun getWeather(cityName: String, apiKey: String) =
-                throw UnsupportedOperationException("Fake API service - should not be called in UI tests")
-        }
-    }
-
-    // Note: We don't provide Retrofit in tests (not needed)
-    // We directly provide the API service mock
-}
-
-/**
  * SUMMARY OF IMPROVEMENTS WITH HILT:
  *
- * WITHOUT Hilt:
+ * WITHOUT Hilt (see CityListFragmentTest.kt):
  * ❌ Real on-disk database (slow, persists)
  * ❌ Tests interfere with each other
  * ❌ Manual database setup/teardown
@@ -371,16 +257,19 @@ object TestNetworkModule {
  * ❌ Race conditions with database lifecycle
  * ❌ Complex boilerplate
  * ❌ Can't test navigation easily
+ * ❌ Test infrastructure mixed with test code
  *
- * WITH Hilt:
- * ✅ In-memory database (fast, isolated)
+ * WITH Hilt (this file):
+ * ✅ In-memory database (fast, isolated) - see di/TestAppModule.kt
  * ✅ Each test gets fresh dependencies
  * ✅ Automatic dependency injection
- * ✅ Easy to mock API
+ * ✅ Easy to mock API - see di/TestAppModule.kt
  * ✅ Fast, reliable tests
  * ✅ No race conditions
- * ✅ Clean, simple test code
+ * ✅ Clean, simple test code (only test logic in this file)
  * ✅ Navigation testing supported
+ * ✅ Reusable test utilities - see utils/HiltFragmentTestUtils.kt
+ * ✅ Modular architecture (separation of concerns)
  *
  * The difference is night and day!
  */
