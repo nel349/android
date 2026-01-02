@@ -13,6 +13,7 @@ import com.norman.weatherapp.data.model.WeatherData
 import com.norman.weatherapp.data.repository.Result
 import com.norman.weatherapp.databinding.FragmentWeatherDetailBinding
 import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 /**
@@ -27,7 +28,12 @@ import kotlinx.coroutines.launch
  * - Fragment has more complex lifecycle (onAttach, onCreate, onCreateView, onViewCreated, etc.)
  * - Fragment can be reused in different activities
  * - Fragment communicates via shared ViewModel (not direct references)
+ *
+ * WITH HILT:
+ * - @AndroidEntryPoint enables Hilt in this Fragment
+ * - activityViewModels() now gets Hilt-injected ViewModel
  */
+@AndroidEntryPoint
 class WeatherDetailFragment : Fragment() {
 
     private var _binding: FragmentWeatherDetailBinding? = null

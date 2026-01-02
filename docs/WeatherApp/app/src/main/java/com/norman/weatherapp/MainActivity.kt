@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.norman.weatherapp.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * MainActivity - NavHost container for fragments
@@ -22,7 +23,12 @@ import com.norman.weatherapp.databinding.ActivityMainBinding
  * - Better separation of concerns
  * - Easier testing
  * - Modern Android architecture
+ *
+ * WITH HILT:
+ * - @AndroidEntryPoint enables dependency injection
+ * - Fragments inside this Activity can now use Hilt
  */
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

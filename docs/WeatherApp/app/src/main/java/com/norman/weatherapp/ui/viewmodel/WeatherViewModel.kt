@@ -1,29 +1,46 @@
 package com.norman.weatherapp.ui.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.norman.weatherapp.data.local.WeatherDatabase
 import com.norman.weatherapp.data.model.WeatherData
 import com.norman.weatherapp.data.repository.Result
 import com.norman.weatherapp.data.repository.WeatherRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * ViewModel for Weather screen
  *
- * WHY ANDROIDVIEWMODEL?
- * - Extends AndroidViewModel (instead of ViewModel) to get Application context
- * - Needed to create Room database (requires context)
- * - In Week 3, we'll use Hilt for dependency injection (better approach)
+ * WITH HILT:
+ * - @HiltViewModel tells Hilt this is a ViewModel
+ * - @Inject constructor tells Hilt to provide dependencies
+ * - No more AndroidViewModel (don't need Application context!)
+ * - No more manual dependency creation
+ *
+ * BEFORE (without Hilt):
+ * class WeatherViewModel(application: Application) : AndroidViewModel(application) {
+ *     private val database = WeatherDatabase.getDatabase(application)
+ *     private val weatherDao = database.weatherDao()
+ *     private val repository = WeatherRepository(weatherDao)
+ * }
+ *
+ * AFTER (with Hilt):
+ * @HiltViewModel
+ * class WeatherViewModel @Inject constructor(
+ *     private val repository: WeatherRepository
+ * ) : ViewModel() {
+ *     // Hilt provides repository automatically!
+ *     // Repository exposes cachedCities (no need to inject DAO directly)
+ * }
  *
  * WHY VIEWMODEL?
  * - Survives configuration changes (screen rotation)
  * - Separates UI logic from business logic
- * - Testable without Activity
+ * - Testable (can inject fake repository!)
  * - Has its own lifecycle (longer than Activity)
  *
  * KEY CONCEPTS:
@@ -31,15 +48,10 @@ import kotlinx.coroutines.launch
  * - StateFlow: Hot flow for UI state (like LiveData but better)
  * - ViewModel is NOT destroyed on rotation!
  */
-class WeatherViewModel(application: Application) : AndroidViewModel(application) {
-
-    // Get Room database and DAO
-    private val database = WeatherDatabase.getDatabase(application)
-    private val weatherDao = database.weatherDao()
-
-    // Repository instance with Room caching
-    // (In Week 3, Hilt will inject this automatically)
-    private val repository = WeatherRepository(weatherDao)
+@HiltViewModel
+class WeatherViewModel @Inject constructor(
+    private val repository: WeatherRepository  // Hilt provides this (single dependency!)
+) : ViewModel() {
 
     // StateFlow - UI state
     // Private mutable version (only ViewModel can modify)
@@ -49,8 +61,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     val weatherState: StateFlow<Result<WeatherData>> = _weatherState
 
     // Flow of all cached cities (for CityListFragment)
-    // Directly exposed from DAO - automatically updates when data changes
-    val cachedCities = weatherDao.getAllWeather()
+    // Exposed from repository - automatically updates when data changes
+    val cachedCities = repository.cachedCities
 
     companion object {
         private const val TAG = "WeatherViewModel"

@@ -3,7 +3,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp") version "2.0.21-1.0.28"  // KSP for Room (matches Kotlin 2.0.21)
+    alias(libs.plugins.google.ksp)  // KSP for Room and Hilt
+    alias(libs.plugins.google.hilt)  // Hilt for Dependency Injection
     id("androidx.navigation.safeargs.kotlin") version "2.7.6"  // SafeArgs for type-safe navigation
 }
 
@@ -94,6 +95,10 @@ dependencies {
     // Fragment
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
+    // Hilt - Dependency Injection
+    implementation("com.google.dagger:hilt-android:2.51")
+    ksp("com.google.dagger:hilt-compiler:2.51")  // Hilt code generation (uses KSP - modern!)
+
     // Testing dependencies
     testImplementation(libs.junit)
 
@@ -118,6 +123,10 @@ dependencies {
     // Arch Core Testing - InstantTaskExecutorRule for LiveData/ViewModel
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 
+    // Hilt Testing (for unit tests)
+    testImplementation("com.google.dagger:hilt-android-testing:2.51")
+    kspTest("com.google.dagger:hilt-compiler:2.51")
+
     // Instrumented testing dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -136,4 +145,8 @@ dependencies {
 
     // UIAutomator (for programmatic animation control - optional)
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
+
+    // Hilt Testing (for instrumented tests)
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.51")
 }

@@ -14,6 +14,7 @@ import com.norman.weatherapp.R
 import com.norman.weatherapp.databinding.FragmentCityListBinding
 import com.norman.weatherapp.ui.adapters.CityAdapter
 import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 /**
@@ -29,7 +30,12 @@ import kotlinx.coroutines.launch
  * - activityViewModels() = Shares ViewModel with Activity + other Fragments
  * - Allows fragments to communicate via shared ViewModel
  * - ViewModel survives fragment recreation
+ *
+ * WITH HILT:
+ * - @AndroidEntryPoint enables Hilt in this Fragment
+ * - activityViewModels() now gets Hilt-injected ViewModel
  */
+@AndroidEntryPoint
 class CityListFragment : Fragment() {
 
     private var _binding: FragmentCityListBinding? = null

@@ -2,7 +2,7 @@ package com.norman.weatherapp.data.repository
 
 import android.util.Log
 import com.norman.weatherapp.BuildConfig
-import com.norman.weatherapp.data.api.RetrofitInstance
+import com.norman.weatherapp.data.api.WeatherApiService
 import com.norman.weatherapp.data.local.WeatherDao
 import com.norman.weatherapp.data.local.toWeatherData
 import com.norman.weatherapp.data.local.toWeatherEntity
@@ -11,6 +11,7 @@ import com.norman.weatherapp.data.model.toWeatherData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * Repository pattern with offline-first caching
@@ -24,16 +25,26 @@ import kotlinx.coroutines.withContext
  * - Fresh data when online
  * - Cached data when offline
  * - Single source of truth (Repository)
+ *
+ * WITH HILT:
+ * - @Inject constructor tells Hilt to provide dependencies
+ * - No need to create RetrofitInstance.api manually
+ * - Hilt provides weatherDao and api automatically
  */
-class WeatherRepository(
-    private val weatherDao: WeatherDao  // Room DAO for caching
+class WeatherRepository @Inject constructor(
+    private val weatherDao: WeatherDao,  // Hilt provides this (from DatabaseModule)
+    private val api: WeatherApiService    // Hilt provides this (from NetworkModule)
 ) {
-
-    private val api = RetrofitInstance.api
 
     companion object {
         private const val TAG = "WeatherRepository"
     }
+
+    /**
+     * Flow of all cached cities from Room database
+     * Exposed for ViewModel to observe
+     */
+    val cachedCities = weatherDao.getAllWeather()
 
     /**
      * Fetch weather data with offline-first caching
