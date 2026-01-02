@@ -16,14 +16,16 @@
 - ✅ Project: Weather app (OpenWeatherMap API, StateFlow, Coroutines)
 - ✅ LeetCode: 7/7 Arrays & Strings complete!
 
-**Week 2: 60% COMPLETE (PAUSED)** - MVVM + Components
+**Week 2: COMPLETED ✅** - MVVM + Components
 - ✅ ViewModel (survives rotation, viewModelScope)
 - ✅ Room Database (offline-first, Entity, DAO, @Volatile, synchronized)
-- ✅ Offline caching working perfectly
-- ⏸️ **PAUSED** - Fragments + Navigation remaining
-- 🎯 LeetCode: 0/7 Week 2 target (do when ready)
+- ✅ Fragments (lifecycle, shared ViewModel, activityViewModels)
+- ✅ Navigation Component (NavGraph, SafeArgs, type-safe navigation)
+- ✅ RecyclerView (ViewHolder, ListAdapter, DiffUtil)
+- ✅ Multi-screen app working (CityList + WeatherDetail)
+- 🎯 LeetCode: 0/7 Week 2 target (optional)
 
-**When you return: Continue Week 2** - Add Fragments + Navigation for multi-screen app
+**Next Up: Week 3** - Dependency Injection (Hilt) + Testing
 
 ---
 

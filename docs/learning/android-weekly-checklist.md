@@ -121,22 +121,28 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Type converters ⏳ Not needed yet (will cover when needed)
 
 **Navigation Component:**
-- [ ] NavHost and NavController
-- [ ] Navigation graph (XML)
-- [ ] SafeArgs (type-safe arguments)
-- [ ] Deep linking basics
+- [x] NavHost and NavController ✅ Implemented in MainActivity
+- [x] Navigation graph (XML) ✅ Created nav_graph.xml with 2 destinations
+- [x] SafeArgs (type-safe arguments) ✅ Passing cityName between fragments
+- [ ] Deep linking basics ⚠️ Not covered (advanced topic)
 
 **Fragments:**
-- [ ] Fragment lifecycle
-- [ ] FragmentManager and transactions
-- [ ] Fragment-Activity communication
-- [ ] Fragment arguments (Bundle)
+- [x] Fragment lifecycle ✅ Learned onCreateView, onViewCreated, onDestroyView
+- [x] FragmentManager and transactions ✅ Handled by NavController automatically
+- [x] Fragment-Activity communication ✅ Shared ViewModel pattern (activityViewModels)
+- [x] Fragment arguments (Bundle) ✅ SafeArgs auto-generates argument classes
+
+**RecyclerView:**
+- [x] RecyclerView fundamentals ✅ Implemented CityAdapter
+- [x] ViewHolder pattern ✅ CityViewHolder with ViewBinding
+- [x] ListAdapter + DiffUtil ✅ Smart list updates with animations
+- [x] Item click handling ✅ Navigate to detail on click
 
 **Project:**
 - [x] Weather app: Add MVVM architecture ✅ ViewModel implemented, rotation tested
 - [x] Weather app: Add Room caching (offline-first) ✅ Offline functionality working
-- [ ] Weather app: Multi-screen (list + detail) ⏳ Next up
-- [ ] Weather app: Navigation Component ⏳ Next up
+- [x] Weather app: Multi-screen (list + detail) ✅ CityList + WeatherDetail fragments
+- [x] Weather app: Navigation Component ✅ Type-safe navigation with SafeArgs
 
 **LeetCode:**
 - [ ] 7 easy-medium mix (HashMaps, Two Pointers) ⏳ Week 2 target

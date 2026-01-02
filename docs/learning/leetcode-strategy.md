@@ -35,7 +35,7 @@ Your structured path to solving 200 problems in 6 months and crushing FAANG codi
 **Patterns:** Hash maps, two pointers, sliding window basics
 
 **Week 2 (7 easy/medium): HashMaps & Two Pointers**
-- Roman to Integer, Integer to Roman
+- ~~Roman to Integer~~, ~~Integer to Roman~~
 - Container With Most Water, 3Sum
 - Longest Palindromic Substring
 

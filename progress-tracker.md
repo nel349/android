@@ -7,9 +7,9 @@ Track your weekly progress here. Check off tasks as you complete them.
 ## Month 1: Foundation + ElevenLabs SDK
 
 - [x] **Week 1:** Kotlin refresh (15 hrs, 7 leetcode, Weather app) ✅ **COMPLETED**
-- [ ] **Week 2:** MVVM + Components (15 hrs, 7 leetcode, Weather app + offline) ⏸️ **60% COMPLETE (PAUSED)**
-  - ✅ ViewModel + Room Database working
-  - ⏸️ Fragments + Navigation remaining
+- [x] **Week 2:** MVVM + Components (15 hrs, 7 leetcode, Weather app + offline) ✅ **COMPLETED**
+  - ✅ ViewModel + Room Database + Offline-first
+  - ✅ Fragments + Navigation + RecyclerView
 - [ ] **Week 3:** DI + Testing (15 hrs, 7 leetcode, SDK research)
 - [ ] **Week 4:** Compose + SDK Start (18 hrs, 7 leetcode, SDK core)
 
@@ -19,7 +19,7 @@ Track your weekly progress here. Check off tasks as you complete them.
 - [ ] Phase 3: Polish & README (Week 5)
 - [ ] Phase 4: GitHub published ✅
 
-**Leetcode:** 7/28 (Month 1 target) ✅ Week 1 complete!
+**Leetcode:** 7/28 (Month 1 target) - Week 1 complete, Week 2 pending
 
 ---
 
