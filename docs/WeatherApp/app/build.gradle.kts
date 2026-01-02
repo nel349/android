@@ -118,6 +118,19 @@ dependencies {
     // Arch Core Testing - InstantTaskExecutorRule for LiveData/ViewModel
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 
+    // Instrumented testing dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Fragment testing
+    debugImplementation("androidx.fragment:fragment-testing:1.6.2")
+
+    // Navigation testing
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.6")
+
+    // Espresso Contrib (for RecyclerView testing)
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+
+    // Coroutines test for instrumented tests
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }
