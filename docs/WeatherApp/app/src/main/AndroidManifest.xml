@@ -21,6 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Compose Activity for Compose-based screens -->
+        <activity
+            android:name=".ui.activities.ComposeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.WeatherApp" />
     </application>
 
 </manifest>

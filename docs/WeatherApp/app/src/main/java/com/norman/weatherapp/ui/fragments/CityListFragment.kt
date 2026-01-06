@@ -1,17 +1,21 @@
 package com.norman.weatherapp.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.norman.weatherapp.R
 import com.norman.weatherapp.databinding.FragmentCityListBinding
+import com.norman.weatherapp.ui.activities.ComposeActivity
 import com.norman.weatherapp.ui.adapters.CityAdapter
 import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,9 +62,51 @@ class CityListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupToolbar()
+        setupMenu()
         setupRecyclerView()
         observeCachedCities()
         setupFabClick()
+    }
+
+    /**
+     * Setup toolbar as the ActionBar
+     *
+     * CONCEPT:
+     * - MaterialToolbar in fragment needs to be set as ActionBar
+     * - This allows the menu (overflow dots) to appear
+     * - setSupportActionBar() tells the Activity to use this toolbar
+     */
+    private fun setupToolbar() {
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
+    }
+
+    /**
+     * Setup options menu (modern way with MenuProvider)
+     *
+     * XML → Compose navigation:
+     * Menu click → Intent → ComposeActivity → AboutScreen
+     */
+    private fun setupMenu() {
+        val menuHost: MenuHost = requireActivity()
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.city_list_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_about -> {
+                        // Navigate to Compose screen via Intent
+                        val intent = Intent(requireContext(), ComposeActivity::class.java)
+                        startActivity(intent)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     /**

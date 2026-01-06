@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)  // Compose Compiler (required for Kotlin 2.0+)
     alias(libs.plugins.google.ksp)  // KSP for Room and Hilt
     alias(libs.plugins.google.hilt)  // Hilt for Dependency Injection
     id("androidx.navigation.safeargs.kotlin") version "2.7.6"  // SafeArgs for type-safe navigation
@@ -39,6 +40,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true  // Enable Jetpack Compose
     }
 
     buildTypes {
@@ -102,6 +104,32 @@ dependencies {
     // Hilt - Dependency Injection
     implementation("com.google.dagger:hilt-android:2.51")
     ksp("com.google.dagger:hilt-compiler:2.51")  // Hilt code generation (uses KSP - modern!)
+
+    // Jetpack Compose
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Compose - Core
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+
+    // Compose - Lifecycle integration
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // Compose - Activity integration
+    implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Compose - Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+    // Compose - Debug tools
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Testing dependencies
     testImplementation(libs.junit)
