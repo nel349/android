@@ -204,8 +204,7 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Weather app: Repository tests ⏳ Not needed yet (simple pass-through)
 
 **ElevenLabs SDK:**
-- [ ] Start research (ElevenLabs API docs) ⏳ Week 4
-- [ ] Read native SDK docs (if exists) ⏳ Week 4
+- [ ] **MOVED TO AFTER MIDNIGHT WALLET** ⏳ Will do after Week 8 (need module/React Native experience first)
 
 **LeetCode:**
 - [ ] 7 medium (Linked Lists, Stacks) ⏳ Can start anytime
@@ -221,7 +220,7 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ---
 
-### Week 4: Compose + SDK Start (18 hours) ⏳ **IN PROGRESS**
+### Week 4: Compose Fundamentals (18 hours) ✅ **COMPLETED**
 
 #### Kotlin Language Topics
 
@@ -242,16 +241,24 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 **Compose Layouts:**
 - [x] `Row`, `Column` ✅ Used in AboutScreen layout structure
-- [ ] `Box` ⏳ Will use in Weather History empty state
-- [ ] `LazyColumn`, `LazyRow` ⏳ Will learn with Weather History screen
-- [x] `Modifier` (padding, size, click, etc.) ✅ Basic usage in AboutScreen
-- [x] Spacer, Divider ✅ Used Spacer(weight), HorizontalDivider
+- [x] `Box` ✅ Used in WeatherHistoryScreen for empty states
+- [x] `LazyColumn`, `LazyRow` ✅ Implemented LazyColumn in WeatherHistoryScreen
+- [x] `Modifier` (padding, size, click, etc.) ✅ Used extensively (padding, fillMaxSize, clickable)
+- [x] Spacer, Divider ✅ Used Spacer(weight, height), HorizontalDivider
 
 **Compose Side Effects:**
-- [ ] `LaunchedEffect` (for suspend functions) ⏳ Will use for loading preferences and data
-- [ ] `DisposableEffect` (cleanup on leave) ⏳ Will use for cleanup in History screen
-- [ ] `SideEffect` (publish to non-Compose code) ⏳ Advanced topic
-- [ ] `rememberCoroutineScope` ⏳ Will use for manual actions (refresh, etc.)
+- [x] `LaunchedEffect` (for suspend functions) ✅ Visual exercise in WeatherHistoryScreen (auto-refresh on open)
+- [ ] `DisposableEffect` (cleanup on leave) ⏳ Will learn during Midnight Wallet (WebSocket connect/disconnect)
+- [ ] `SideEffect` (publish to non-Compose code) ⏳ Advanced topic (rarely needed)
+- [x] `rememberCoroutineScope` ✅ Visual exercise in WeatherHistoryScreen (manual refresh button)
+
+**Visual Exercise Added:**
+- ✅ LaunchedEffect: Auto-refresh when screen opens (shows Snackbar automatically)
+- ✅ rememberCoroutineScope: Manual refresh button (shows loading indicator)
+- ✅ Simulated 2-second delay with visual feedback
+- ✅ Automatic cancellation when leaving screen
+- ✅ Loading state management with StateFlow
+- ✅ Documentation: launchedeffect-visual-exercise.md
 
 **Compose State Management:**
 - [x] `collectAsState()` (Flow → State) ✅ Understand Flow to State conversion
@@ -266,16 +273,44 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 **Compose UI Components:**
 - [x] Scaffold ✅ Used for screen structure with TopAppBar
-- [x] TopAppBar (CenterAlignedTopAppBar) ✅ AboutScreen toolbar
-- [x] Button, OutlinedButton ✅ Close and Licenses buttons
+- [x] TopAppBar, CenterAlignedTopAppBar ✅ AboutScreen and WeatherHistoryScreen toolbars
+- [x] TopAppBar with navigationIcon ✅ Back button in WeatherHistoryScreen
+- [x] TopAppBar with actions ✅ Clear history button in WeatherHistoryScreen
+- [x] Button, OutlinedButton ✅ Close, Licenses, and History buttons
 - [x] Switch ✅ Toggle switches for settings
-- [x] AlertDialog ✅ Licenses dialog
-- [x] Text ✅ All text components
+- [x] AlertDialog ✅ Licenses dialog and clear history confirmation
+- [x] AlertDialog for destructive actions ✅ Confirmation before clearing history
+- [x] Text ✅ All text components with various styles
+- [x] Card ✅ History items in WeatherHistoryScreen
+- [x] IconButton with Icons ✅ Back arrow and delete icons
 - [x] MaterialToolbar (XML → Compose bridge) ✅ Added to CityListFragment
 
 **Compose Navigation:**
 - [x] Intent-based navigation (XML → Compose) ✅ CityListFragment → ComposeActivity
-- [ ] Compose Navigation Component ⏳ Future: All-Compose navigation
+- [x] Compose Navigation Component ✅ NavHost, NavController, Routes
+- [x] Sealed class for routes ✅ Type-safe route definitions (Screen.About, Screen.History)
+- [x] `rememberNavController()` ✅ Navigation state management
+- [x] `NavHost` with `startDestination` ✅ Navigation graph setup
+- [x] `composable()` destinations ✅ Define screens in navigation graph
+- [x] `navigate()` for forward navigation ✅ Move to new screen
+- [x] `popBackStack()` for back navigation ✅ Return to previous screen
+- [x] Callback-based navigation ✅ Loose coupling (screens don't know NavController)
+- [x] Back stack management ✅ Understanding navigation history
+- [ ] Navigation with arguments ⏳ Future: pass data between screens
+- [ ] Deep linking ⏳ Future: open specific screen from notification
+
+**LazyColumn (Efficient Lists):**
+- [x] LazyColumn basics ✅ Implemented in WeatherHistoryScreen
+- [x] `items()` function ✅ Iterate over list of data
+- [x] `key` parameter ✅ Unique identifier for efficient updates (used item.id)
+- [x] `contentPadding` ✅ Padding around list content
+- [x] `verticalArrangement` ✅ Spacing between items (spacedBy)
+- [x] Efficient rendering ✅ Only visible items rendered (like RecyclerView)
+- [x] Empty state handling ✅ Box layout with conditional rendering
+- [x] Card items ✅ Individual list items with elevation
+- [x] Clickable items ✅ `Modifier.clickable` for future navigation
+- [ ] Pull-to-refresh ⏳ Future: SwipeRefresh integration
+- [ ] Pagination ⏳ Future: Load more items on scroll
 
 **DataStore (Modern Preferences):**
 - [x] DataStore basics ✅ Replaced SharedPreferences with DataStore
@@ -285,6 +320,18 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] DataStore + Repository pattern ✅ PreferencesRepository encapsulates DataStore
 - [x] StateFlow conversion ✅ Flow → StateFlow with stateIn() operator
 - [x] ProcessLifecycleOwner ✅ App-wide lifecycle for global features
+
+**Room Database (Advanced):**
+- [x] Multiple entities in one database ✅ WeatherEntity + WeatherHistoryEntity
+- [x] Database versioning ✅ Incremented version from 1 to 2
+- [x] Adding new tables ✅ Added weather_history table
+- [x] DAO methods for multiple tables ✅ Extended WeatherDao with history methods
+- [x] `OnConflictStrategy.IGNORE` ✅ Prevent duplicate history entries
+- [x] Query with LIMIT ✅ `getRecentHistory(limit: Int)`
+- [x] Multiple Flow streams ✅ cachedCities + searchHistory from same DAO
+- [x] Helper methods in entities ✅ getFormattedTemperature(), getRelativeTimeString()
+- [x] Timestamp tracking ✅ System.currentTimeMillis() for search history
+- [x] Repository exposing multiple Flows ✅ cachedCities and searchHistory
 
 **XML Views Patterns (Legacy - Why Compose Exists):**
 - [x] Manual state management ✅ Caching data for re-rendering when state changes
@@ -299,10 +346,17 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] Multiple previews (light/dark) ✅ Two preview variants for same screen
 
 **Component Extraction:**
-- [x] Reusable composables ✅ Extracted LicensesDialog, SettingRow, LicenseItem
+- [x] Reusable composables ✅ Extracted LicensesDialog, SettingRow, LicenseItem, HistoryItem, EmptyHistoryState
 - [x] Component organization ✅ Learned composable extraction pattern
-- [x] Stateful vs Stateless pattern ✅ AboutScreen (stateful) vs AboutScreenContent (stateless)
+- [x] Stateful vs Stateless pattern ✅ AboutScreen + WeatherHistoryScreen (stateful) vs Content (stateless)
 - [x] Preview-friendly architecture ✅ Stateless components can be previewed without Hilt
+
+**Multiple ViewModels:**
+- [x] Multiple ViewModels in Compose ✅ SettingsViewModel + WeatherHistoryViewModel
+- [x] `@HiltViewModel` annotation ✅ Hilt provides ViewModels automatically
+- [x] ViewModel per screen pattern ✅ Each screen has its own ViewModel
+- [x] Exposing repository Flows ✅ ViewModel exposes StateFlow from repository
+- [x] ViewModel with business logic ✅ clearHistory() method in WeatherHistoryViewModel
 
 **Project:**
 - [x] Weather app: Add Compose to project ✅ Dependencies, plugin, AboutScreen
@@ -314,14 +368,19 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] Weather app: Global theme application ✅ WeatherApplication with ProcessLifecycleOwner + AppCompatDelegate
 - [x] Weather app: Temperature unit integration ✅ XML fragments (WeatherDetail, CityList) use preference
 - [x] Weather app: Manual state management pattern (XML) ✅ Experienced the pain of manual UI updates
-- [ ] Weather app: Weather History with LazyColumn ⏳ NEXT - Learn Compose solution
-- [ ] ElevenLabs SDK: Project structure setup ⏳ Future
-- [ ] ElevenLabs SDK: Core API design ⏳ Future
+- [x] Weather app: Compose Navigation ✅ NavHost, NavController, sealed class routes, navigation between screens
+- [x] Weather app: WeatherHistory entity ✅ Room table for search history
+- [x] Weather app: History tracking ✅ Repository + ViewModel log searches
+- [x] Weather app: Weather History with LazyColumn ✅ WeatherHistoryScreen with efficient list rendering
+- [x] Weather app: Empty states ✅ Box layout with conditional rendering
+- [x] Weather app: Confirmation dialogs ✅ AlertDialog for destructive actions
+- [x] Weather app: Documentation ✅ compose-navigation-explained.md guide
+- [x] Weather app: **COMPLETE** ✅ Ready to move to Midnight Wallet
 
 **LeetCode:**
 - [ ] 7 medium (Trees, Binary Search)
 
-**Week 4 Progress So Far:**
+**Week 4 Achievements:**
 - ✅ **Settings Feature Complete** - DataStore + SettingsViewModel + Dark Mode + Temperature Unit
 - ✅ **State Hoisting Mastered** - ViewModel → StateFlow → Compose State
 - ✅ **Stateful/Stateless Pattern** - Preview-friendly architecture
@@ -331,13 +390,26 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - ✅ **Temperature Conversion** - Celsius/Fahrenheit with user preference
 - ✅ **XML Pain Points Experienced** - Manual state management, duplicate caching, manual UI updates
 - ✅ **StateFlow Replay Behavior** - Understanding last-value emission to new collectors
-- ⏳ **Next:** LazyColumn (Weather History screen) - Experience Compose solution to XML pain
+- ✅ **Compose Navigation Complete** - NavHost, NavController, routes, back stack management
+- ✅ **LazyColumn Mastered** - Efficient list rendering with items() and key
+- ✅ **Weather History Feature** - Room entity, DAO methods, tracking, WeatherHistoryScreen
+- ✅ **Box Layout for Empty States** - Conditional rendering with Box and Alignment
+- ✅ **Multiple ViewModels** - SettingsViewModel + WeatherHistoryViewModel with @HiltViewModel
+- ✅ **Room Database Migration** - Version 2 with WeatherHistoryEntity table
+- ✅ **Confirmation Dialogs** - AlertDialog for destructive actions
+- ✅ **LaunchedEffect Visual Exercise** - Auto-refresh on screen open (like React useEffect)
+- ✅ **rememberCoroutineScope Visual Exercise** - Manual refresh button (async on click)
+- ✅ **Side Effect Automatic Cancellation** - Both cancel when leaving screen
+- ✅ **Loading State Management** - Visual feedback with CircularProgressIndicator
+- ✅ **Snackbar Integration** - SnackbarHost + SnackbarHostState for messages
+- ✅ **Comprehensive Documentation** - compose-navigation-explained.md + launchedeffect-visual-exercise.md
+- ✅ **Navigation Callback Pattern** - Loose coupling between screens and navigation
 
 ---
 
 ## Month 2: Clean Architecture + Midnight Wallet
 
-### Week 5: Clean Arch + Multi-Module (15 hours)
+### Week 5: Clean Arch + Multi-Module + Midnight Wallet Start (15 hours) ⏳ **NEXT**
 
 #### Kotlin Language Topics
 
@@ -371,9 +443,11 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Multi-module patterns
 
 **Project:**
-- [ ] Complete ElevenLabs SDK (publish to GitHub)
 - [ ] Midnight Wallet: Architecture planning
 - [ ] Midnight Wallet: Module structure setup
+- [ ] Midnight Wallet: Clean Architecture layers design
+
+**Note:** ElevenLabs SDK moved to after Midnight Wallet completion (need multi-module + React Native bridge experience first)
 
 **LeetCode:**
 - [ ] 7 medium (DFS/BFS)
@@ -464,7 +538,7 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ---
 
-### Week 8: Testing + CI/CD (20 hours)
+### Week 8: Testing + CI/CD + Midnight Wallet Completion (20 hours)
 
 #### Kotlin Language Topics
 
@@ -501,9 +575,53 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] Midnight Wallet: CI/CD setup
 - [ ] Midnight Wallet: Security audit
 - [ ] Midnight Wallet: Publish to GitHub
+- [ ] Midnight Wallet: **COMPLETE** ✅
+
+**After Week 8:** Start ElevenLabs SDK (Android module + React Native bridge)
 
 **LeetCode:**
 - [ ] 7 medium-hard (Graphs)
+
+---
+
+## ElevenLabs SDK (Between Month 2 & 3) - 1 Week
+
+### ElevenLabs Android SDK (7-10 hours)
+
+**Why After Midnight Wallet:**
+- Need multi-module architecture experience first
+- Need to understand Clean Architecture layers
+- Need React Native bridge knowledge
+- Midnight Wallet provides foundation for SDK structure
+
+#### Project Structure
+- [ ] Android module structure (`:elevenlabs-sdk`)
+- [ ] React Native bridge module (`:react-native-elevenlabs`)
+- [ ] Multi-module dependencies
+- [ ] Version catalog management
+
+#### Core SDK Features
+- [ ] ElevenLabs API client (Retrofit)
+- [ ] Text-to-Speech implementation
+- [ ] Audio streaming
+- [ ] Voice cloning API integration
+- [ ] Error handling & retry logic
+
+#### React Native Bridge
+- [ ] React Native module setup
+- [ ] Native methods exposure
+- [ ] Promise-based API
+- [ ] Event emitters for streaming
+- [ ] TypeScript definitions
+
+#### Documentation & Publishing
+- [ ] API documentation
+- [ ] Usage examples
+- [ ] README.md
+- [ ] Publish to GitHub
+- [ ] (Optional) Publish to Maven Central
+
+**After ElevenLabs SDK:** Continue to Month 3 (AI Chat)
 
 ---
 
@@ -824,16 +942,18 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 **By end of each month, you should have checked off:**
 - **Month 1:** ✅ **COMPLETED**
   - ✅ Kotlin: Scope functions, null safety, coroutines basics, Flow basics, inline/reified, extension functions
-  - ✅ Android: Activity lifecycle, ViewBinding, Room, Navigation, MVVM architecture
+  - ✅ Android: Activity lifecycle, ViewBinding, Room, Navigation, MVVM architecture, Jetpack Compose fundamentals
   - ✅ Hilt: Complete DI integration with @HiltAndroidApp, @Module, @Inject, @AndroidEntryPoint
   - ✅ Testing: Unit tests (7 passing), instrumented tests (6 passing), modular test architecture
   - ✅ Advanced concepts: Type erasure, reification, crossinline, resource annotations
-  - ✅ Project: Weather app complete with Hilt + comprehensive test suite
-  - ⏳ ElevenLabs SDK: Starting Week 4
-- **Month 2:**
+  - ✅ Compose: State management, Navigation, LazyColumn, Material3 theming, DataStore
+  - ✅ Project: Weather app **COMPLETE** with Hilt + Compose + comprehensive test suite
+- **Month 2:** ⏳ **STARTING NEXT**
   - Kotlin: Advanced coroutines, structured concurrency, advanced Flow
-  - Android: Clean Architecture, multi-module, Hilt, testing, security
-  - Project: Midnight Wallet complete
+  - Android: Clean Architecture, multi-module, advanced Compose (side effects), security
+  - Compose Side Effects: LaunchedEffect, DisposableEffect, rememberCoroutineScope (learned during Midnight Wallet)
+  - Project: Midnight Wallet complete (Weeks 5-8)
+  - **After Month 2**: ElevenLabs SDK (1 week: multi-module + React Native bridge)
 - **Month 3:**
   - Kotlin: Performance optimization, advanced patterns
   - Android: Profiling, custom views, WorkManager, system design practice
