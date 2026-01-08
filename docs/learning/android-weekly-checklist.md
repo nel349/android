@@ -229,14 +229,16 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] `remember`, `mutableStateOf` ✅ Used in AboutScreen for toggles and dialog state
 - [x] `State<T>` vs `MutableState<T>` ✅ Understand immutable vs mutable state
 - [x] Delegates (`by` keyword for state) ✅ Used `by remember { mutableStateOf() }` pattern
+- [x] Function references (`::`) ✅ `viewModel::updateDarkMode` as callback parameter
+- [x] Flow operators (`map`, `stateIn`) ✅ Transform Flow and convert to StateFlow
 
 #### Android Framework Topics
 
 **Jetpack Compose Fundamentals:**
 - [x] Composable functions (`@Composable`) ✅ Created AboutScreen, LicensesDialog, SettingRow, LicenseItem
 - [x] State and recomposition ✅ Toggles trigger recomposition
-- [ ] State hoisting (lift state up) ⏳ Will learn with Settings + ViewModel integration
-- [ ] Unidirectional data flow ⏳ Will learn with ViewModel → Compose flow
+- [x] State hoisting (lift state up) ✅ Moved state from AboutScreen to SettingsViewModel
+- [x] Unidirectional data flow ✅ Events up (callbacks), State down (StateFlow)
 
 **Compose Layouts:**
 - [x] `Row`, `Column` ✅ Used in AboutScreen layout structure
@@ -252,14 +254,15 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] `rememberCoroutineScope` ⏳ Will use for manual actions (refresh, etc.)
 
 **Compose State Management:**
-- [ ] `collectAsState()` (Flow → State) ⏳ Will use for observing DB/ViewModel
-- [ ] `collectAsStateWithLifecycle()` (lifecycle-aware) ⏳ Will use for production-ready Flow collection
-- [ ] `rememberSaveable` (survive process death) ⏳ Will use in Settings screen
+- [x] `collectAsState()` (Flow → State) ✅ Understand Flow to State conversion
+- [x] `collectAsStateWithLifecycle()` (lifecycle-aware) ✅ Used in AboutScreen to observe SettingsViewModel
+- [ ] `rememberSaveable` (survive process death) ⏳ Will use in future screens
 
 **Compose Theming:**
 - [x] Material Design 3 basics ✅ Using MaterialTheme, Material3 components
-- [ ] Color scheme (dark/light mode) ⏳ Will implement functional Dark Mode toggle
+- [x] Color scheme (dark/light mode) ✅ Implemented functional Dark Mode with darkColorScheme()/lightColorScheme()
 - [x] Typography ✅ Using MaterialTheme.typography
+- [x] Dynamic theming based on state ✅ Theme switches when user toggles preference
 
 **Compose UI Components:**
 - [x] Scaffold ✅ Used for screen structure with TopAppBar
@@ -274,25 +277,49 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] Intent-based navigation (XML → Compose) ✅ CityListFragment → ComposeActivity
 - [ ] Compose Navigation Component ⏳ Future: All-Compose navigation
 
+**DataStore (Modern Preferences):**
+- [x] DataStore basics ✅ Replaced SharedPreferences with DataStore
+- [x] Preferences DataStore ✅ Key-value storage with type-safe keys
+- [x] Flow-based reading ✅ Reactive preferences with Flow
+- [x] Async writing ✅ Suspend functions for writing preferences
+- [x] DataStore + Repository pattern ✅ PreferencesRepository encapsulates DataStore
+- [x] StateFlow conversion ✅ Flow → StateFlow with stateIn() operator
+
 **Compose Previews:**
 - [x] `@Preview` annotation ✅ AboutScreenPreview, LicensesDialogPreview
 - [x] `showBackground` parameter ✅ Understand background display in previews
+- [x] Previewing with fake data ✅ AboutScreenPreviewLight/Dark with UserPreferences
+- [x] Multiple previews (light/dark) ✅ Two preview variants for same screen
 
 **Component Extraction:**
 - [x] Reusable composables ✅ Extracted LicensesDialog, SettingRow, LicenseItem
 - [x] Component organization ✅ Learned composable extraction pattern
+- [x] Stateful vs Stateless pattern ✅ AboutScreen (stateful) vs AboutScreenContent (stateless)
+- [x] Preview-friendly architecture ✅ Stateless components can be previewed without Hilt
 
 **Project:**
 - [x] Weather app: Add Compose to project ✅ Dependencies, plugin, AboutScreen
 - [x] Weather app: First Compose screen (AboutScreen) ✅ Interactive UI with state
-- [ ] Weather app: Functional Settings (Dark Mode, preferences) ⏳ NEXT
+- [x] Weather app: DataStore setup ✅ PreferencesRepository with DataStore
+- [x] Weather app: SettingsViewModel ✅ State hoisting with StateFlow
+- [x] Weather app: Functional Dark Mode ✅ Theme switches based on preference
+- [x] Weather app: Stateful/Stateless pattern ✅ AboutScreen split for previews
+- [ ] Weather app: Global theme application ⏳ Apply dark mode to entire app (not just Compose)
+- [ ] Weather app: Temperature unit integration ⏳ Use preference in weather display
 - [ ] Weather app: Weather History with LazyColumn ⏳ NEXT
-- [ ] Weather app: State hoisting practice ⏳ Settings + History screens
 - [ ] ElevenLabs SDK: Project structure setup ⏳ Future
 - [ ] ElevenLabs SDK: Core API design ⏳ Future
 
 **LeetCode:**
 - [ ] 7 medium (Trees, Binary Search)
+
+**Week 4 Progress So Far:**
+- ✅ **Settings Feature Complete** - DataStore + SettingsViewModel + Dark Mode
+- ✅ **State Hoisting Mastered** - ViewModel → StateFlow → Compose State
+- ✅ **Stateful/Stateless Pattern** - Preview-friendly architecture
+- ✅ **Material3 Theming** - Dynamic dark/light mode switching
+- ✅ **DataStore Integration** - Modern preferences with Flow
+- ⏳ **Next:** LazyColumn (Weather History screen)
 
 ---
 
