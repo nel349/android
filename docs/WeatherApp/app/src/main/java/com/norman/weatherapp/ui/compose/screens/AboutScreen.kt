@@ -31,6 +31,7 @@ import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
  */
 @Composable
 fun AboutScreen(
+    onNavigateToHistory: () -> Unit = {},
     onClose: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
@@ -45,6 +46,7 @@ fun AboutScreen(
         userPreferences = userPreferences,
         onDarkModeChange = viewModel::updateDarkMode,
         onTemperatureUnitChange = viewModel::updateTemperatureUnit,
+        onNavigateToHistory = onNavigateToHistory,
         onClose = onClose
     )
 }
@@ -70,6 +72,7 @@ private fun AboutScreenContent(
     userPreferences: UserPreferences,
     onDarkModeChange: (Boolean) -> Unit,
     onTemperatureUnitChange: (Boolean) -> Unit,
+    onNavigateToHistory: () -> Unit,
     onClose: () -> Unit
 ) {
     // LOCAL UI STATE (doesn't need ViewModel)
@@ -151,6 +154,17 @@ private fun AboutScreenContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("View Licenses")
+            }
+
+            // Weather History Button
+            // COMPOSE NAVIGATION IN ACTION:
+            // Clicking this button calls onNavigateToHistory callback
+            // Which triggers navController.navigate(Screen.History.route)
+            OutlinedButton(
+                onClick = onNavigateToHistory,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Weather History")
             }
 
             // Close Button
@@ -281,6 +295,7 @@ private fun AboutScreenPreviewLight() {
             ),
             onDarkModeChange = {},
             onTemperatureUnitChange = {},
+            onNavigateToHistory = {},
             onClose = {}
         )
     }
@@ -297,6 +312,7 @@ private fun AboutScreenPreviewDark() {
             ),
             onDarkModeChange = {},
             onTemperatureUnitChange = {},
+            onNavigateToHistory = {},
             onClose = {}
         )
     }

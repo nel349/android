@@ -70,7 +70,12 @@ class WeatherViewModel @Inject constructor(
 
     /**
      * Fetch weather for a city
-     * Called from UI layer (Activity)
+     * Called from UI layer (Activity/Fragment)
+     *
+     * LEARNING: History Tracking
+     * - On successful fetch, log it in history
+     * - History is separate from cached cities
+     * - WeatherHistoryScreen will show all searches
      */
     fun fetchWeather(city: String) {
         // Validate input
@@ -92,6 +97,14 @@ class WeatherViewModel @Inject constructor(
 
             // Update state with result
             _weatherState.value = result
+
+            // If successful, log to history
+            // LEARNING: Pattern matching with when + is
+            if (result is Result.Success) {
+                // Insert history in background (don't wait for it)
+                // Even if history fails, weather fetch succeeded
+                repository.insertHistory(result.data)
+            }
 
             Log.d(TAG, "Weather result: $result")
         }

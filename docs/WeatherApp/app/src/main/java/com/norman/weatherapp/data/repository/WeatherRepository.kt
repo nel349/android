@@ -4,6 +4,7 @@ import android.util.Log
 import com.norman.weatherapp.BuildConfig
 import com.norman.weatherapp.data.api.WeatherApiService
 import com.norman.weatherapp.data.local.WeatherDao
+import com.norman.weatherapp.data.local.entities.WeatherHistoryEntity
 import com.norman.weatherapp.data.local.toWeatherData
 import com.norman.weatherapp.data.local.toWeatherEntity
 import com.norman.weatherapp.data.model.WeatherData
@@ -45,6 +46,17 @@ class WeatherRepository @Inject constructor(
      * Exposed for ViewModel to observe
      */
     val cachedCities = weatherDao.getAllWeather()
+
+    /**
+     * Flow of all search history from Room database
+     * Exposed for WeatherHistoryScreen to observe
+     *
+     * LEARNING: Multiple Flows from same Repository
+     * - cachedCities = User's saved cities (CityListFragment)
+     * - searchHistory = All searches made (WeatherHistoryScreen)
+     * - Both update automatically when data changes
+     */
+    val searchHistory = weatherDao.getAllHistory()
 
     /**
      * Fetch weather data with offline-first caching
@@ -99,6 +111,61 @@ class WeatherRepository @Inject constructor(
                     Log.e(TAG, "Error reading cache: ${cacheError.message}", cacheError)
                     Result.Error(e.message ?: "Unknown error occurred")
                 }
+            }
+        }
+    }
+
+    /**
+     * Insert weather search into history
+     *
+     * LEARNING: Why separate method?
+     * - ViewModel calls this after successful weather fetch
+     * - Keeps history tracking separate from data fetching
+     * - Easy to add/remove history tracking without changing getWeather()
+     *
+     * WHEN CALLED:
+     * - ViewModel.fetchWeather() gets Result.Success
+     * - ViewModel calls insertHistory() to log the search
+     * - History appears in WeatherHistoryScreen
+     *
+     * @param weatherData The weather data to log in history
+     */
+    suspend fun insertHistory(weatherData: WeatherData) {
+        withContext(Dispatchers.IO) {
+            try {
+                val historyEntity = WeatherHistoryEntity(
+                    cityName = weatherData.cityName,
+                    temperatureCelsius = weatherData.temperatureCelsius,
+                    description = weatherData.description,
+                    timestamp = System.currentTimeMillis()
+                )
+                weatherDao.insertHistory(historyEntity)
+                Log.d(TAG, "History logged for: ${weatherData.cityName}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error inserting history: ${e.message}", e)
+                // Don't propagate error - history is not critical
+                // Main weather fetch should succeed even if history fails
+            }
+        }
+    }
+
+    /**
+     * Delete all search history
+     * Called from Settings or History screen "Clear History" button
+     *
+     * LEARNING: Destructive operations
+     * - Should show confirmation dialog before calling
+     * - Repository doesn't know about UI (no dialog here)
+     * - ViewModel/Screen shows dialog, then calls this if confirmed
+     */
+    suspend fun deleteAllHistory() {
+        withContext(Dispatchers.IO) {
+            try {
+                weatherDao.deleteAllHistory()
+                Log.d(TAG, "History cleared")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error deleting history: ${e.message}", e)
+                throw e  // Propagate error so UI can show error message
             }
         }
     }

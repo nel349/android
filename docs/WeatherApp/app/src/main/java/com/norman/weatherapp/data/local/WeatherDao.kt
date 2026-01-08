@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.norman.weatherapp.data.local.entities.WeatherHistoryEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -61,4 +62,69 @@ interface WeatherDao {
      */
     @Query("DELETE FROM weather WHERE timestamp < :timestamp")
     suspend fun deleteOldWeather(timestamp: Long)
+
+    // ========== WEATHER HISTORY METHODS ==========
+
+    /**
+     * Insert weather search into history
+     *
+     * LEARNING: History vs Cached Weather
+     * - WeatherEntity = User's saved cities (one per city, REPLACE on conflict)
+     * - WeatherHistoryEntity = Search log (new entry every search, IGNORE duplicates)
+     *
+     * OnConflictStrategy.IGNORE:
+     * - If exact same entry exists, don't insert again
+     * - Prevents duplicate entries when user searches same city multiple times quickly
+     * - Alternative: REPLACE would update timestamp of existing entry
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertHistory(history: WeatherHistoryEntity)
+
+    /**
+     * Get all search history
+     *
+     * LEARNING: Flow for reactive UI
+     * - Returns Flow<List<WeatherHistoryEntity>>
+     * - Compose UI will automatically update when history changes
+     * - ORDER BY timestamp DESC = most recent first
+     *
+     * LazyColumn will display this list:
+     * - User searches "Tokyo" → inserted → Flow emits updated list → UI updates
+     * - No manual refresh needed!
+     */
+    @Query("SELECT * FROM weather_history ORDER BY timestamp DESC")
+    fun getAllHistory(): Flow<List<WeatherHistoryEntity>>
+
+    /**
+     * Get recent history (last N entries)
+     * Useful for showing "Recent Searches" section
+     *
+     * LEARNING: LIMIT in SQL
+     * - LIMIT :limit = Return only first N rows
+     * - Combined with ORDER BY timestamp DESC = most recent N searches
+     */
+    @Query("SELECT * FROM weather_history ORDER BY timestamp DESC LIMIT :limit")
+    fun getRecentHistory(limit: Int): Flow<List<WeatherHistoryEntity>>
+
+    /**
+     * Delete all search history
+     * For "Clear History" button in settings
+     *
+     * LEARNING: Confirmation dialogs
+     * - Destructive actions should show confirmation dialog
+     * - We'll implement this in Compose with AlertDialog
+     */
+    @Query("DELETE FROM weather_history")
+    suspend fun deleteAllHistory()
+
+    /**
+     * Delete old history entries
+     * For automatic cleanup (e.g., delete entries older than 30 days)
+     *
+     * LEARNING: Maintenance queries
+     * - Keep database size manageable
+     * - Can run periodically with WorkManager (not covered yet)
+     */
+    @Query("DELETE FROM weather_history WHERE timestamp < :timestamp")
+    suspend fun deleteOldHistory(timestamp: Long)
 }

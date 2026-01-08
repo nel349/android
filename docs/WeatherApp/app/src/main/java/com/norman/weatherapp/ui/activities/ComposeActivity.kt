@@ -7,23 +7,33 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.norman.weatherapp.ui.compose.screens.AboutScreen
+import com.norman.weatherapp.ui.compose.screens.WeatherHistoryScreen
+import com.norman.weatherapp.ui.navigation.Screen
 import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- * ComposeActivity - Host for Compose screens
+ * ComposeActivity - Host for Compose screens with Navigation
  *
  * HOW IT WORKS:
  * - ComponentActivity (not AppCompatActivity) for Compose
  * - setContent { } replaces setContentView(R.layout.xxx)
  * - MaterialTheme provides Material Design 3 theming
+ * - NavHost manages navigation between Compose screens
  *
  * NAVIGATION:
- * - XML Fragment → Intent → ComposeActivity (this file) → AboutScreen
+ * - XML Fragment → Intent → ComposeActivity (this file) → NavHost → Compose screens
+ * - NavHost manages: About ↔ History ↔ (future screens)
  *
  * THEMING:
  * - Observes user preference for dark/light mode
@@ -57,14 +67,74 @@ class ComposeActivity : ComponentActivity() {
             // MaterialTheme provides colors, typography, shapes
             // Now responds to dark mode toggle!
             MaterialTheme(colorScheme = colorScheme) {
-                // AboutScreen is our @Composable function
-                AboutScreen(
-                    onClose = {
-                        // Close button → finish activity → return to CityList
-                        finish()
-                    }
+                // COMPOSE NAVIGATION:
+                // Create NavController to manage navigation state
+                val navController = rememberNavController()
+
+                // NavHost defines the navigation graph
+                ComposeNavGraph(
+                    navController = navController,
+                    onClose = { finish() }
                 )
             }
+        }
+    }
+}
+
+/**
+ * Compose Navigation Graph
+ *
+ * NAVIGATION CONCEPTS:
+ * - NavHost = Container that swaps composables based on route
+ * - NavController = Manages navigation state and actions
+ * - composable("route") = Defines a destination in the graph
+ * - startDestination = First screen to show
+ *
+ * HOW IT WORKS:
+ * 1. NavHost starts at "about" route
+ * 2. Shows AboutScreen
+ * 3. User clicks "View Weather History" → navController.navigate("history")
+ * 4. NavHost swaps to WeatherHistoryScreen
+ * 5. User presses back button → navController.popBackStack() → returns to About
+ *
+ * NAVIGATION ACTIONS:
+ * - navController.navigate(route) = Go to a screen
+ * - navController.popBackStack() = Go back to previous screen
+ * - onClose() = finish() activity (exit app)
+ *
+ * COMPARISON TO XML NAVIGATION:
+ * - XML: <fragment> tags in nav_graph.xml
+ * - Compose: composable {} blocks in code
+ * - Both create a navigation graph, Compose is more flexible
+ */
+@Composable
+fun ComposeNavGraph(
+    navController: NavHostController,
+    onClose: () -> Unit
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.About.route
+    ) {
+        // About Screen destination
+        composable(route = Screen.About.route) {
+            AboutScreen(
+                onNavigateToHistory = {
+                    // Navigate to History screen
+                    navController.navigate(Screen.History.route)
+                },
+                onClose = onClose
+            )
+        }
+
+        // Weather History Screen destination
+        composable(route = Screen.History.route) {
+            WeatherHistoryScreen(
+                onNavigateBack = {
+                    // Navigate back to About screen
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
