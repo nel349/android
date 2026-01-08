@@ -12,9 +12,23 @@ data class WeatherData(
     val windSpeed: Double
 ) {
     /**
-     * Extension function to format temperature for display
+     * Format temperature for display based on user preference
+     *
+     * TEMPERATURE CONVERSION:
+     * - Celsius → Fahrenheit: F = (C × 9/5) + 32
+     * - User preference determines which unit to show
+     *
+     * @param isCelsius true for Celsius, false for Fahrenheit
+     * @return formatted temperature string with unit symbol
      */
-    fun getFormattedTemperature(): String = "${temperatureCelsius.toInt()}°C"
+    fun getFormattedTemperature(isCelsius: Boolean = true): String {
+        return if (isCelsius) {
+            "${temperatureCelsius.toInt()}°C"
+        } else {
+            val fahrenheit = (temperatureCelsius * 9 / 5) + 32
+            "${fahrenheit.toInt()}°F"
+        }
+    }
 
     /**
      * Extension function to format humidity for display

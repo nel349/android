@@ -10,6 +10,7 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,6 +18,7 @@ import com.norman.weatherapp.R
 import com.norman.weatherapp.databinding.FragmentCityListBinding
 import com.norman.weatherapp.ui.activities.ComposeActivity
 import com.norman.weatherapp.ui.adapters.CityAdapter
+import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
 import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -48,6 +50,9 @@ class CityListFragment : Fragment() {
     // Shared ViewModel (shared with Activity and other fragments)
     private val viewModel: WeatherViewModel by activityViewModels()
 
+    // Settings ViewModel for temperature unit preference
+    private val settingsViewModel: SettingsViewModel by viewModels()
+
     private lateinit var cityAdapter: CityAdapter
 
     override fun onCreateView(
@@ -65,6 +70,7 @@ class CityListFragment : Fragment() {
         setupToolbar()
         setupMenu()
         setupRecyclerView()
+        observeUserPreferences()
         observeCachedCities()
         setupFabClick()
     }
@@ -113,16 +119,35 @@ class CityListFragment : Fragment() {
      * Setup RecyclerView with adapter
      */
     private fun setupRecyclerView() {
-        // Create adapter with click listener
-        cityAdapter = CityAdapter { city ->
-            // Navigate to WeatherDetailFragment when city clicked
-            val action = CityListFragmentDirections
-                .actionCityListToWeatherDetail(city.cityName)
-            findNavController().navigate(action)
-        }
+        // Create adapter with click listener and initial temperature unit
+        cityAdapter = CityAdapter(
+            onCityClick = { city ->
+                // Navigate to WeatherDetailFragment when city clicked
+                val action = CityListFragmentDirections
+                    .actionCityListToWeatherDetail(city.cityName)
+                findNavController().navigate(action)
+            },
+            isCelsius = true  // Default, will be updated by observeUserPreferences()
+        )
 
         // Set adapter to RecyclerView
         binding.cityRecyclerView.adapter = cityAdapter
+    }
+
+    /**
+     * Observe user preferences for temperature unit
+     *
+     * TEMPERATURE UNIT INTEGRATION:
+     * - Observes user's Celsius/Fahrenheit preference
+     * - Updates adapter when preference changes
+     * - Adapter refreshes all items with new unit
+     */
+    private fun observeUserPreferences() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            settingsViewModel.userPreferences.collect { preferences ->
+                cityAdapter.updateTemperatureUnit(preferences.isCelsius)
+            }
+        }
     }
 
     /**

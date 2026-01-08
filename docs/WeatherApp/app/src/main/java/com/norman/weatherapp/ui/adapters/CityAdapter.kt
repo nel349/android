@@ -22,10 +22,23 @@ import com.norman.weatherapp.databinding.ItemCityBinding
  * - Automatic diff calculation
  * - Smooth animations when list changes
  * - Less boilerplate
+ *
+ * TEMPERATURE UNIT SUPPORT:
+ * - Adapter now accepts isCelsius parameter
+ * - When user changes preference, fragment updates adapter and calls notifyDataSetChanged()
  */
 class CityAdapter(
-    private val onCityClick: (WeatherEntity) -> Unit  // Callback when city clicked
+    private val onCityClick: (WeatherEntity) -> Unit,  // Callback when city clicked
+    private var isCelsius: Boolean = true             // Temperature unit preference
 ) : ListAdapter<WeatherEntity, CityAdapter.CityViewHolder>(CityDiffCallback()) {
+
+    /**
+     * Update temperature unit preference and refresh display
+     */
+    fun updateTemperatureUnit(isCelsius: Boolean) {
+        this.isCelsius = isCelsius
+        notifyDataSetChanged()  // Refresh all visible items
+    }
 
     /**
      * ViewHolder - Holds references to views in item layout
@@ -39,9 +52,17 @@ class CityAdapter(
          * Bind data to views
          * Called for each visible item
          */
-        fun bind(city: WeatherEntity, onCityClick: (WeatherEntity) -> Unit) {
+        fun bind(city: WeatherEntity, onCityClick: (WeatherEntity) -> Unit, isCelsius: Boolean) {
             binding.cityNameText.text = city.cityName
-            binding.temperatureText.text = "${city.temperatureCelsius.toInt()}°C"
+
+            // Format temperature based on user preference
+            binding.temperatureText.text = if (isCelsius) {
+                "${city.temperatureCelsius.toInt()}°C"
+            } else {
+                val fahrenheit = (city.temperatureCelsius * 9 / 5) + 32
+                "${fahrenheit.toInt()}°F"
+            }
+
             binding.descriptionText.text = city.description.replaceFirstChar { it.uppercase() }
 
             // Handle item click
@@ -70,7 +91,7 @@ class CityAdapter(
      */
     override fun onBindViewHolder(holder: CityViewHolder, position: Int) {
         val city = getItem(position)  // getItem() from ListAdapter
-        holder.bind(city, onCityClick)
+        holder.bind(city, onCityClick, isCelsius)
     }
 
     /**

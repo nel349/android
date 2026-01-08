@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.norman.weatherapp.data.model.WeatherData
 import com.norman.weatherapp.data.repository.Result
 import com.norman.weatherapp.databinding.FragmentWeatherDetailBinding
+import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
 import com.norman.weatherapp.ui.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,8 +44,17 @@ class WeatherDetailFragment : Fragment() {
     // Shared ViewModel (shared with Activity and CityListFragment)
     private val viewModel: WeatherViewModel by activityViewModels()
 
+    // Settings ViewModel for temperature unit preference
+    private val settingsViewModel: SettingsViewModel by viewModels()
+
     // SafeArgs - automatically generated from nav_graph.xml
     private val args: WeatherDetailFragmentArgs by navArgs()
+
+    // Store current temperature unit preference
+    private var isCelsius: Boolean = true
+
+    // Store current weather data to re-display when preference changes
+    private var currentWeatherData: WeatherData? = null
 
     companion object {
         private const val TAG = "WeatherDetailFragment"
@@ -62,6 +73,7 @@ class WeatherDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
+        observeUserPreferences()
         observeWeatherState()
 
         // If cityName was passed, fetch weather
@@ -69,6 +81,33 @@ class WeatherDetailFragment : Fragment() {
         if (cityName.isNotEmpty()) {
             Log.d(TAG, "Fetching weather for: $cityName")
             viewModel.fetchWeather(cityName)
+        }
+    }
+
+    /**
+     * Observe user preferences for temperature unit
+     *
+     * TEMPERATURE UNIT INTEGRATION:
+     * - Observes user's Celsius/Fahrenheit preference
+     * - Updates local variable when preference changes
+     * - Re-displays current weather with new unit (if weather is showing)
+     *
+     * KEY DIFFERENCE FROM COMPOSE:
+     * - XML views don't auto-update when variables change
+     * - Must manually refresh the UI by calling showWeather() again
+     * - Compose would automatically recompose when state changes
+     */
+    private fun observeUserPreferences() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            settingsViewModel.userPreferences.collect { preferences ->
+                isCelsius = preferences.isCelsius
+
+                // Re-display current weather with new temperature unit
+                // This makes the UI update immediately when user changes preference
+                currentWeatherData?.let { data ->
+                    showWeather(data)
+                }
+            }
         }
     }
 
@@ -104,18 +143,23 @@ class WeatherDetailFragment : Fragment() {
     // ========== UI UPDATE METHODS (same as old MainActivity) ==========
 
     private fun showIdle() {
+        currentWeatherData = null  // Clear stored data
         binding.loadingProgressBar.visibility = View.GONE
         binding.weatherCard.visibility = View.GONE
         binding.errorText.visibility = View.GONE
     }
 
     private fun showLoading() {
+        // Don't clear currentWeatherData - keep showing previous data while loading
         binding.loadingProgressBar.visibility = View.VISIBLE
         binding.weatherCard.visibility = View.GONE
         binding.errorText.visibility = View.GONE
     }
 
     private fun showWeather(data: WeatherData) {
+        // Store current weather data for re-display when preference changes
+        currentWeatherData = data
+
         // Hide loading and error
         binding.loadingProgressBar.visibility = View.GONE
         binding.errorText.visibility = View.GONE
@@ -124,14 +168,17 @@ class WeatherDetailFragment : Fragment() {
         binding.weatherCard.visibility = View.VISIBLE
 
         // Update UI with data
+        // Use user's temperature unit preference
         binding.cityNameText.text = data.cityName
-        binding.temperatureText.text = data.getFormattedTemperature()
+        binding.temperatureText.text = data.getFormattedTemperature(isCelsius)
         binding.descriptionText.text = data.description.replaceFirstChar { it.uppercase() }
         binding.humidityText.text = data.getFormattedHumidity()
         binding.windSpeedText.text = data.getFormattedWindSpeed()
     }
 
     private fun showError(message: String) {
+        currentWeatherData = null  // Clear stored data on error
+
         // Hide loading and weather card
         binding.loadingProgressBar.visibility = View.GONE
         binding.weatherCard.visibility = View.GONE
