@@ -9,45 +9,71 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.norman.weatherapp.data.preferences.UserPreferences
 import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 /**
- * About Screen - First Compose Screen!
+ * About Screen - Stateful Container
  *
  * LEARNING GOALS:
  * ✅ @Composable functions
- * ✅ Column layout
- * ✅ State management (remember, mutableStateOf)
- * ✅ Event handling (onClick)
- * ✅ Material3 components (Switch, Button, AlertDialog)
  * ✅ STATE HOISTING (ViewModel owns state)
  * ✅ collectAsStateWithLifecycle() (StateFlow -> Compose State)
  * ✅ Unidirectional data flow (events up, state down)
+ * ✅ STATEFUL vs STATELESS composables
+ *
+ * ARCHITECTURE PATTERN:
+ * - AboutScreen (this) = Stateful container (has ViewModel)
+ * - AboutScreenContent = Stateless UI (just receives data and callbacks)
+ * - Benefits: Can preview UI without ViewModel, easier to test
  */
-
 @Composable
 fun AboutScreen(
     onClose: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     // STATE HOISTING IN ACTION:
-    // BEFORE: var isDarkMode by remember { mutableStateOf(false) }
-    // AFTER: Read state from ViewModel
-    //
-    // collectAsStateWithLifecycle():
-    // - Converts StateFlow<UserPreferences> -> State<UserPreferences>
-    // - Lifecycle-aware (stops collecting when screen not visible)
-    // - Automatic recomposition when StateFlow emits new value
-    //
-    // WHY .value:
-    // - viewModel.userPreferences is StateFlow<UserPreferences>
-    // - collectAsStateWithLifecycle() returns State<UserPreferences>
-    // - .value gives us UserPreferences object
+    // Read state from ViewModel and pass down to content
     val userPreferences by viewModel.userPreferences.collectAsStateWithLifecycle()
 
-    // STATE: Dialog visibility
+    // Stateless content composable receives:
+    // 1. State (userPreferences) - flows DOWN
+    // 2. Callbacks (onDarkModeChange, etc.) - events flow UP
+    AboutScreenContent(
+        userPreferences = userPreferences,
+        onDarkModeChange = viewModel::updateDarkMode,
+        onTemperatureUnitChange = viewModel::updateTemperatureUnit,
+        onClose = onClose
+    )
+}
+
+/**
+ * About Screen Content - Stateless UI
+ *
+ * LEARNING: STATELESS COMPOSABLES
+ * - No ViewModel dependency
+ * - No remember/mutableStateOf (except for local UI state like dialog visibility)
+ * - Just receives data and callbacks as parameters
+ * - Easy to preview, test, and reuse
+ *
+ * BENEFITS:
+ * - Preview works without Hilt/ViewModel
+ * - Easier to test (just pass fake data)
+ * - Reusable (can be used in different contexts)
+ * - Clear separation of concerns
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AboutScreenContent(
+    userPreferences: UserPreferences,
+    onDarkModeChange: (Boolean) -> Unit,
+    onTemperatureUnitChange: (Boolean) -> Unit,
+    onClose: () -> Unit
+) {
+    // LOCAL UI STATE (doesn't need ViewModel)
+    // Dialog visibility is local to this screen, not persisted
     var showLicensesDialog by remember { mutableStateOf(false) }
 
     // UI STRUCTURE
@@ -97,13 +123,13 @@ fun AboutScreen(
 
             // Dark Mode Toggle
             // UNIDIRECTIONAL DATA FLOW:
-            // 1. Display: checked = userPreferences.isDarkMode (state DOWN from ViewModel)
-            // 2. Event: onCheckedChange calls viewModel function (event UP to ViewModel)
+            // 1. Display: checked = userPreferences.isDarkMode (state DOWN)
+            // 2. Event: onCheckedChange calls callback (event UP)
             SettingRow(
                 label = "Dark Mode",
                 description = "Switch between light and dark theme",
                 checked = userPreferences.isDarkMode,
-                onCheckedChange = { viewModel.updateDarkMode(it) }
+                onCheckedChange = onDarkModeChange
             )
 
             // Temperature Unit Toggle
@@ -111,7 +137,7 @@ fun AboutScreen(
                 label = if (userPreferences.isCelsius) "Celsius" else "Fahrenheit",
                 description = "Temperature unit preference",
                 checked = userPreferences.isCelsius,
-                onCheckedChange = { viewModel.updateTemperatureUnit(it) }
+                onCheckedChange = onTemperatureUnitChange
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -235,21 +261,46 @@ private fun LicenseItem(name: String, author: String, license: String) {
 /**
  * Preview - See in Android Studio Design tab!
  *
- * LEARNING: @Preview lets you see Composables without running the app
+ * LEARNING: Previewing stateless composables
+ * - AboutScreenContent is stateless (no ViewModel)
+ * - We can preview it by passing fake data
+ * - This is why separating stateful/stateless is powerful!
  *
- * NOTE: Preview won't work after adding ViewModel with Hilt
- * - Previews don't have access to Hilt dependency injection
- * - To preview, you'd need to create a fake ViewModel
- * - For now, test by running the app
- * - This is a common tradeoff with state hoisting + DI
+ * PATTERN:
+ * - Production: AboutScreen (with ViewModel) → AboutScreenContent
+ * - Preview: AboutScreenContent with fake data
  */
-// @Preview(showBackground = true)
-// @Composable
-// private fun AboutScreenPreview() {
-//     MaterialTheme {
-//         AboutScreen()
-//     }
-// }
+@Preview(showBackground = true, name = "Light Mode")
+@Composable
+private fun AboutScreenPreviewLight() {
+    MaterialTheme {
+        AboutScreenContent(
+            userPreferences = UserPreferences(
+                isDarkMode = false,
+                isCelsius = true
+            ),
+            onDarkModeChange = {},
+            onTemperatureUnitChange = {},
+            onClose = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Dark Mode")
+@Composable
+private fun AboutScreenPreviewDark() {
+    MaterialTheme(colorScheme = darkColorScheme()) {
+        AboutScreenContent(
+            userPreferences = UserPreferences(
+                isDarkMode = true,
+                isCelsius = false
+            ),
+            onDarkModeChange = {},
+            onTemperatureUnitChange = {},
+            onClose = {}
+        )
+    }
+}
 
 /**
  * Preview for Licenses Dialog
