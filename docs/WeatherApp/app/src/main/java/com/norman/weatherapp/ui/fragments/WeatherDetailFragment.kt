@@ -104,6 +104,18 @@ class WeatherDetailFragment : Fragment() {
 
                 // Re-display current weather with new temperature unit
                 // This makes the UI update immediately when user changes preference
+                // BAD: FOR EDUCATION PURPOSES (LEAVE) BUT THIS IS THE REASON WHY JETPACK COMPOSE EXISTS!!
+                //  State changes → Manual cache update → Manual UI refresh
+                /**
+                 *  XML + Manual Updates (what we just did)
+                 *      ↓ painful, doesn't scale
+                 *   LiveData + Observers (2018 best practice)
+                 *      ↓ better, but still manual logic
+                 *   Data Binding (2019)
+                 *      ↓ complex, magic strings
+                 *   Compose (2021+) ← THE SOLUTION
+                 *      ↓ reactive, automatic, clean
+                 */
                 currentWeatherData?.let { data ->
                     showWeather(data)
                 }
