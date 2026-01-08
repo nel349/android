@@ -284,6 +284,13 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] Async writing ✅ Suspend functions for writing preferences
 - [x] DataStore + Repository pattern ✅ PreferencesRepository encapsulates DataStore
 - [x] StateFlow conversion ✅ Flow → StateFlow with stateIn() operator
+- [x] ProcessLifecycleOwner ✅ App-wide lifecycle for global features
+
+**XML Views Patterns (Legacy - Why Compose Exists):**
+- [x] Manual state management ✅ Caching data for re-rendering when state changes
+- [x] Manual UI updates ✅ Calling update functions when variables change
+- [x] StateFlow replay behavior ✅ Understanding last-value caching and re-emission
+- [x] Fragment lifecycle + state ✅ Managing state across recreation
 
 **Compose Previews:**
 - [x] `@Preview` annotation ✅ AboutScreenPreview, LicensesDialogPreview
@@ -302,11 +309,12 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [x] Weather app: First Compose screen (AboutScreen) ✅ Interactive UI with state
 - [x] Weather app: DataStore setup ✅ PreferencesRepository with DataStore
 - [x] Weather app: SettingsViewModel ✅ State hoisting with StateFlow
-- [x] Weather app: Functional Dark Mode ✅ Theme switches based on preference
+- [x] Weather app: Functional Dark Mode in Compose ✅ Theme switches based on preference
 - [x] Weather app: Stateful/Stateless pattern ✅ AboutScreen split for previews
-- [ ] Weather app: Global theme application ⏳ Apply dark mode to entire app (not just Compose)
-- [ ] Weather app: Temperature unit integration ⏳ Use preference in weather display
-- [ ] Weather app: Weather History with LazyColumn ⏳ NEXT
+- [x] Weather app: Global theme application ✅ WeatherApplication with ProcessLifecycleOwner + AppCompatDelegate
+- [x] Weather app: Temperature unit integration ✅ XML fragments (WeatherDetail, CityList) use preference
+- [x] Weather app: Manual state management pattern (XML) ✅ Experienced the pain of manual UI updates
+- [ ] Weather app: Weather History with LazyColumn ⏳ NEXT - Learn Compose solution
 - [ ] ElevenLabs SDK: Project structure setup ⏳ Future
 - [ ] ElevenLabs SDK: Core API design ⏳ Future
 
@@ -314,12 +322,16 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 - [ ] 7 medium (Trees, Binary Search)
 
 **Week 4 Progress So Far:**
-- ✅ **Settings Feature Complete** - DataStore + SettingsViewModel + Dark Mode
+- ✅ **Settings Feature Complete** - DataStore + SettingsViewModel + Dark Mode + Temperature Unit
 - ✅ **State Hoisting Mastered** - ViewModel → StateFlow → Compose State
 - ✅ **Stateful/Stateless Pattern** - Preview-friendly architecture
 - ✅ **Material3 Theming** - Dynamic dark/light mode switching
 - ✅ **DataStore Integration** - Modern preferences with Flow
-- ⏳ **Next:** LazyColumn (Weather History screen)
+- ✅ **Global Theme Application** - ProcessLifecycleOwner + AppCompatDelegate (entire app)
+- ✅ **Temperature Conversion** - Celsius/Fahrenheit with user preference
+- ✅ **XML Pain Points Experienced** - Manual state management, duplicate caching, manual UI updates
+- ✅ **StateFlow Replay Behavior** - Understanding last-value emission to new collectors
+- ⏳ **Next:** LazyColumn (Weather History screen) - Experience Compose solution to XML pain
 
 ---
 
