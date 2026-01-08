@@ -3,8 +3,15 @@ package com.norman.weatherapp.ui.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.norman.weatherapp.ui.compose.screens.AboutScreen
+import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -17,6 +24,11 @@ import dagger.hilt.android.AndroidEntryPoint
  *
  * NAVIGATION:
  * - XML Fragment → Intent → ComposeActivity (this file) → AboutScreen
+ *
+ * THEMING:
+ * - Observes user preference for dark/light mode
+ * - Applies color scheme dynamically
+ * - Changes apply immediately when user toggles switch
  */
 @AndroidEntryPoint
 class ComposeActivity : ComponentActivity() {
@@ -28,8 +40,23 @@ class ComposeActivity : ComponentActivity() {
         // Instead of: setContentView(R.layout.activity_compose)
         // We use: setContent { @Composable content }
         setContent {
+            // Get SettingsViewModel to observe dark mode preference
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            val userPreferences by settingsViewModel.userPreferences.collectAsStateWithLifecycle()
+
+            // MATERIAL3 THEMING:
+            // - darkColorScheme() = Material3 dark colors
+            // - lightColorScheme() = Material3 light colors
+            // - Switch based on user preference
+            val colorScheme = if (userPreferences.isDarkMode) {
+                darkColorScheme()
+            } else {
+                lightColorScheme()
+            }
+
             // MaterialTheme provides colors, typography, shapes
-            MaterialTheme {
+            // Now responds to dark mode toggle!
+            MaterialTheme(colorScheme = colorScheme) {
                 // AboutScreen is our @Composable function
                 AboutScreen(
                     onClose = {

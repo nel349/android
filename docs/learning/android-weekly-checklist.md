@@ -221,50 +221,75 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ---
 
-### Week 4: Compose + SDK Start (18 hours)
+### Week 4: Compose + SDK Start (18 hours) ⏳ **IN PROGRESS**
 
 #### Kotlin Language Topics
 
 **Compose State (Kotlin Integration):**
-- [ ] `remember`, `mutableStateOf`
-- [ ] `State<T>` vs `MutableState<T>`
-- [ ] Delegates (`by` keyword for state)
+- [x] `remember`, `mutableStateOf` ✅ Used in AboutScreen for toggles and dialog state
+- [x] `State<T>` vs `MutableState<T>` ✅ Understand immutable vs mutable state
+- [x] Delegates (`by` keyword for state) ✅ Used `by remember { mutableStateOf() }` pattern
 
 #### Android Framework Topics
 
 **Jetpack Compose Fundamentals:**
-- [ ] Composable functions (`@Composable`)
-- [ ] State and recomposition
-- [ ] State hoisting (lift state up)
-- [ ] Unidirectional data flow
+- [x] Composable functions (`@Composable`) ✅ Created AboutScreen, LicensesDialog, SettingRow, LicenseItem
+- [x] State and recomposition ✅ Toggles trigger recomposition
+- [ ] State hoisting (lift state up) ⏳ Will learn with Settings + ViewModel integration
+- [ ] Unidirectional data flow ⏳ Will learn with ViewModel → Compose flow
 
 **Compose Layouts:**
-- [ ] `Row`, `Column`, `Box`
-- [ ] `LazyColumn`, `LazyRow`
-- [ ] `Modifier` (padding, size, click, etc.)
-- [ ] Spacer, Divider
+- [x] `Row`, `Column` ✅ Used in AboutScreen layout structure
+- [ ] `Box` ⏳ Will use in Weather History empty state
+- [ ] `LazyColumn`, `LazyRow` ⏳ Will learn with Weather History screen
+- [x] `Modifier` (padding, size, click, etc.) ✅ Basic usage in AboutScreen
+- [x] Spacer, Divider ✅ Used Spacer(weight), HorizontalDivider
 
 **Compose Side Effects:**
-- [ ] `LaunchedEffect` (for suspend functions)
-- [ ] `DisposableEffect` (cleanup on leave)
-- [ ] `SideEffect` (publish to non-Compose code)
-- [ ] `rememberCoroutineScope`
+- [ ] `LaunchedEffect` (for suspend functions) ⏳ Will use for loading preferences and data
+- [ ] `DisposableEffect` (cleanup on leave) ⏳ Will use for cleanup in History screen
+- [ ] `SideEffect` (publish to non-Compose code) ⏳ Advanced topic
+- [ ] `rememberCoroutineScope` ⏳ Will use for manual actions (refresh, etc.)
 
 **Compose State Management:**
-- [ ] `collectAsState()` (Flow → State)
-- [ ] `collectAsStateWithLifecycle()` (lifecycle-aware)
-- [ ] `rememberSaveable` (survive process death)
+- [ ] `collectAsState()` (Flow → State) ⏳ Will use for observing DB/ViewModel
+- [ ] `collectAsStateWithLifecycle()` (lifecycle-aware) ⏳ Will use for production-ready Flow collection
+- [ ] `rememberSaveable` (survive process death) ⏳ Will use in Settings screen
 
 **Compose Theming:**
-- [ ] Material Design 3 basics
-- [ ] Color scheme
-- [ ] Typography
+- [x] Material Design 3 basics ✅ Using MaterialTheme, Material3 components
+- [ ] Color scheme (dark/light mode) ⏳ Will implement functional Dark Mode toggle
+- [x] Typography ✅ Using MaterialTheme.typography
+
+**Compose UI Components:**
+- [x] Scaffold ✅ Used for screen structure with TopAppBar
+- [x] TopAppBar (CenterAlignedTopAppBar) ✅ AboutScreen toolbar
+- [x] Button, OutlinedButton ✅ Close and Licenses buttons
+- [x] Switch ✅ Toggle switches for settings
+- [x] AlertDialog ✅ Licenses dialog
+- [x] Text ✅ All text components
+- [x] MaterialToolbar (XML → Compose bridge) ✅ Added to CityListFragment
+
+**Compose Navigation:**
+- [x] Intent-based navigation (XML → Compose) ✅ CityListFragment → ComposeActivity
+- [ ] Compose Navigation Component ⏳ Future: All-Compose navigation
+
+**Compose Previews:**
+- [x] `@Preview` annotation ✅ AboutScreenPreview, LicensesDialogPreview
+- [x] `showBackground` parameter ✅ Understand background display in previews
+
+**Component Extraction:**
+- [x] Reusable composables ✅ Extracted LicensesDialog, SettingRow, LicenseItem
+- [x] Component organization ✅ Learned composable extraction pattern
 
 **Project:**
-- [ ] Weather app: Migrate UI to Compose
-- [ ] Weather app: State hoisting practice
-- [ ] ElevenLabs SDK: Project structure setup
-- [ ] ElevenLabs SDK: Core API design
+- [x] Weather app: Add Compose to project ✅ Dependencies, plugin, AboutScreen
+- [x] Weather app: First Compose screen (AboutScreen) ✅ Interactive UI with state
+- [ ] Weather app: Functional Settings (Dark Mode, preferences) ⏳ NEXT
+- [ ] Weather app: Weather History with LazyColumn ⏳ NEXT
+- [ ] Weather app: State hoisting practice ⏳ Settings + History screens
+- [ ] ElevenLabs SDK: Project structure setup ⏳ Future
+- [ ] ElevenLabs SDK: Core API design ⏳ Future
 
 **LeetCode:**
 - [ ] 7 medium (Trees, Binary Search)

@@ -93,6 +93,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")  // Coroutines support
     ksp("androidx.room:room-compiler:$roomVersion")       // Annotation processor (KSP)
 
+    // DataStore (modern replacement for SharedPreferences)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     // Navigation Component
     val navVersion = "2.7.6"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")

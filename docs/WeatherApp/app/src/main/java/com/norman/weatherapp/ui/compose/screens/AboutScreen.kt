@@ -7,6 +7,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.norman.weatherapp.ui.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -19,19 +22,30 @@ import androidx.compose.ui.unit.dp
  * ✅ State management (remember, mutableStateOf)
  * ✅ Event handling (onClick)
  * ✅ Material3 components (Switch, Button, AlertDialog)
+ * ✅ STATE HOISTING (ViewModel owns state)
+ * ✅ collectAsStateWithLifecycle() (StateFlow -> Compose State)
+ * ✅ Unidirectional data flow (events up, state down)
  */
 
 @Composable
 fun AboutScreen(
-    onClose: () -> Unit = {}
+    onClose: () -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    // STATE: Dark mode toggle
-    // remember = survive recomposition (UI rebuilds)
-    // mutableStateOf = observable state (triggers recomposition when changed)
-    var isDarkMode by remember { mutableStateOf(false) }
-
-    // STATE: Temperature unit
-    var isCelsius by remember { mutableStateOf(true) }
+    // STATE HOISTING IN ACTION:
+    // BEFORE: var isDarkMode by remember { mutableStateOf(false) }
+    // AFTER: Read state from ViewModel
+    //
+    // collectAsStateWithLifecycle():
+    // - Converts StateFlow<UserPreferences> -> State<UserPreferences>
+    // - Lifecycle-aware (stops collecting when screen not visible)
+    // - Automatic recomposition when StateFlow emits new value
+    //
+    // WHY .value:
+    // - viewModel.userPreferences is StateFlow<UserPreferences>
+    // - collectAsStateWithLifecycle() returns State<UserPreferences>
+    // - .value gives us UserPreferences object
+    val userPreferences by viewModel.userPreferences.collectAsStateWithLifecycle()
 
     // STATE: Dialog visibility
     var showLicensesDialog by remember { mutableStateOf(false) }
@@ -82,19 +96,22 @@ fun AboutScreen(
             )
 
             // Dark Mode Toggle
+            // UNIDIRECTIONAL DATA FLOW:
+            // 1. Display: checked = userPreferences.isDarkMode (state DOWN from ViewModel)
+            // 2. Event: onCheckedChange calls viewModel function (event UP to ViewModel)
             SettingRow(
                 label = "Dark Mode",
                 description = "Switch between light and dark theme",
-                checked = isDarkMode,
-                onCheckedChange = { isDarkMode = it }
+                checked = userPreferences.isDarkMode,
+                onCheckedChange = { viewModel.updateDarkMode(it) }
             )
 
             // Temperature Unit Toggle
             SettingRow(
-                label = if (isCelsius) "Celsius" else "Fahrenheit",
+                label = if (userPreferences.isCelsius) "Celsius" else "Fahrenheit",
                 description = "Temperature unit preference",
-                checked = isCelsius,
-                onCheckedChange = { isCelsius = it }
+                checked = userPreferences.isCelsius,
+                onCheckedChange = { viewModel.updateTemperatureUnit(it) }
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -219,14 +236,20 @@ private fun LicenseItem(name: String, author: String, license: String) {
  * Preview - See in Android Studio Design tab!
  *
  * LEARNING: @Preview lets you see Composables without running the app
+ *
+ * NOTE: Preview won't work after adding ViewModel with Hilt
+ * - Previews don't have access to Hilt dependency injection
+ * - To preview, you'd need to create a fake ViewModel
+ * - For now, test by running the app
+ * - This is a common tradeoff with state hoisting + DI
  */
-@Preview(showBackground = true)
-@Composable
-private fun AboutScreenPreview() {
-    MaterialTheme {
-        AboutScreen()
-    }
-}
+// @Preview(showBackground = true)
+// @Composable
+// private fun AboutScreenPreview() {
+//     MaterialTheme {
+//         AboutScreen()
+//     }
+// }
 
 /**
  * Preview for Licenses Dialog
