@@ -1,80 +1,358 @@
-# Midnight Wallet Android
+# Midnight Wallet Android - Refined Implementation Plan
 
-**Month 2 Project** | 30-40 hours | Weeks 5-8
-
-Build a zero-knowledge privacy-focused cryptocurrency wallet for Android. Demonstrate multi-module Clean Architecture, advanced security, and blockchain expertise.
-
----
-
-## Project Overview
-
-**What:** ZK (zero-knowledge) crypto wallet for Midnight blockchain on Android. Features secure key management, balance viewing, send/receive transactions, and seed phrase backup/restore.
-
-**Why this project:**
-- **Portfolio differentiator:** Shows blockchain expertise (from your background)
-- **Complex architecture:** Multi-module, Clean Arch, security-first design
-- **Real-world problem:** Privacy-preserving crypto transactions
-- **Interview story:** "I built a production-grade crypto wallet with zero-knowledge proofs"
-- **Unique:** Not just another CRUD app - cryptography, security, real money
-
-**Midnight Wallet Libraries Reference:**
-- Located at: `/Users/norman/Development/midnight/midnight-libraries/midnight-wallet`
-- Study these for crypto operations (key generation, signing, ZK proofs)
-
-**Tech Stack:**
-- Kotlin (100%)
-- Multi-module Clean Architecture
-- Jetpack Compose (100% Compose UI)
-- Hilt (dependency injection)
-- Room (encrypted database)
-- Coroutines & Flow
-- EncryptedSharedPreferences (secure key storage)
-- Keystore (hardware-backed keys)
-- Security: AES-256, ed25519 signatures, BIP39 seed phrases
-- Testing: JUnit, MockK, Turbine, Compose UI tests
-- GitHub Actions (CI/CD)
+**Project Type:** Month 2+ | 80-120 hours | Weeks 5-16
+**Status:** ⏳ Planning Complete - Ready to Start Phase 1
 
 ---
 
-## Features (MVP)
+## Executive Summary
 
-### 1. Secure Wallet Creation
-- Generate ed25519 key pair (private/public keys)
-- Derive wallet address from public key
-- Generate BIP39 24-word seed phrase
-- Encrypt private key with user PIN
-- Store in Android Keystore (hardware-backed)
+**Scope:** Full-featured Midnight wallet with ZK privacy and DApp support for Android.
 
-### 2. Wallet Restore
-- Import from 24-word seed phrase
-- Validate BIP39 checksum
-- Re-derive key pair from seed
-- Encrypt and store securely
+**Technical Approach:** Pure Kotlin/JNI implementation - **NO WASM** (avoiding failed WAMR/React Native approaches).
 
-### 3. Balance Viewing
-- Display wallet balance (MIDNIGHT tokens)
-- Fetch from blockchain API (REST or RPC)
-- Offline-first: cache balance in Room
-- Pull-to-refresh
+**Critical Finding:** Midnight-libraries are TypeScript/WASM-based with **ZERO native mobile support**. We must port/reimplement core functionality in Kotlin.
 
-### 4. Send Transaction
-- Input: Recipient address, amount, optional memo
-- Validate address format
-- Sign transaction with private key (ed25519)
-- Broadcast to Midnight network
-- Show pending → confirmed status
-- Transaction history
+**Timeline:** 80-120 hours across 8-12 weeks (extended from original 30-40 hour estimate).
 
-### 5. Receive
-- Display wallet address (text + QR code)
-- Copy to clipboard
-- Share via system share sheet
+**Why Extended:** Full wallet + DApp connector + porting crypto from TypeScript/Rust + building Substrate RPC client from scratch.
 
-### 6. Backup & Security
-- PIN/biometric authentication
-- Backup seed phrase (show once, user must write down)
-- Verify backup (user enters random words)
-- Encrypted local database (SQLCipher)
+---
+
+## Investigation Results
+
+### Midnight Libraries Analysis
+- **Tech Stack:** TypeScript/JavaScript with Rust core compiled to WASM (5-10MB binaries)
+- **Mobile Support:** None - no Kotlin/Java bindings, no Android documentation
+- **Complete SDK Available:**
+  - HD wallets (BIP-32/BIP-44 derivation path: `m/44'/2400'/account'/role/index`)
+  - Address derivation (Bech32m format)
+  - Transaction signing (ed25519)
+  - Shielded transactions (zswap)
+  - Contract interaction
+
+### Failed WASM Integration (MidnightWasmTest Project)
+- **WAMR:** 80% complete on iOS, blocked on externref function calling
+- **Polygen:** Can't handle externref (heavily used by Midnight WASM)
+- **WebView:** Too complex (74KB JS glue injection, performance issues)
+- **Critical Blocker:** externref types required for passing SecretKeys between JS and WASM
+
+### Why Pure Kotlin Approach
+
+✅ **Advantages:**
+- Clean architecture (no WASM runtime complexity)
+- Better performance (native code)
+- Full control over implementation
+- Mobile optimization (memory, battery)
+- Smaller app size (vs 10MB+ WASM bundles)
+
+❌ **Trade-offs:**
+- Must reimplement/port core crypto
+- Can't use official Midnight SDK directly
+- More initial development time
+- Must sync with protocol updates
+
+---
+
+## Configuration Decisions
+
+Based on user requirements:
+
+| Requirement | Decision |
+|-------------|----------|
+| **Proof Server** | User-hosted (Docker), provide endpoint URL in settings |
+| **Networks** | Testnet + Preview support with configurable endpoints |
+| **Crypto Libraries** | Zcash's `kotlin-bip39` + BouncyCastle for ed25519 |
+| **Timeline** | Whatever it takes to do it right (8-12 weeks realistic) |
+| **Settings Panel** | Required for network/endpoint configuration with testnet/preview defaults |
+
+---
+
+## Phased Implementation
+
+### Phase 1: Foundation ⏳ NOT STARTED
+**Timeline:** Weeks 5-6 (20-25 hours)
+**Goal:** Kotlin crypto primitives and key management
+
+#### Tasks:
+1. **Multi-Module Setup**
+   - Create convention plugins (build-logic/)
+   - Set up version catalog (libs.versions.toml)
+   - Configure all modules (app, feature/*, core/*)
+   - Set up Hilt modules
+
+2. **BIP-39 Seed Phrase**
+   - **Library:** `cash.z.ecc.android:kotlin-bip39` (Zcash)
+   - Generate 24-word mnemonics
+   - Checksum validation
+   - Seed derivation
+
+3. **BIP-32 HD Key Derivation**
+   - **Library:** Included in kotlin-bip39
+   - Derivation path: `m/44'/2400'/account'/role/index`
+   - Roles: Night (0,1), Dust (2), Zswap (3), Metadata (4)
+
+4. **Ed25519 Key Pairs**
+   - **Library:** BouncyCastle
+   - Generate from HD seed
+   - Public key → Address derivation
+
+5. **Bech32m Address Formatting**
+   - **Port from:** `@midnight-ntwrk/wallet-sdk-address-format`
+   - Encode public keys to Midnight addresses
+   - Checksum validation
+
+6. **Secure Storage**
+   - Android Keystore (hardware-backed)
+   - EncryptedSharedPreferences (seed backup)
+   - Room + SQLCipher (wallet metadata)
+
+#### Deliverables:
+- [ ] `:core:crypto` module complete
+- [ ] `:core:domain` entities defined
+- [ ] Unit tests (100% crypto coverage with test vectors)
+- [ ] Can create/restore wallet, derive addresses
+
+#### Files to Create:
+```
+core/crypto/
+  ├── BIP39SeedGenerator.kt
+  ├── HDKeyDerivation.kt
+  ├── Ed25519KeyPair.kt
+  ├── AddressFormatter.kt (Bech32m)
+  └── SecureKeyStore.kt
+
+core/domain/
+  ├── entities/Wallet.kt
+  ├── entities/Address.kt
+  └── repository/WalletRepository.kt
+```
+
+**Blockers:** None
+
+---
+
+### Phase 2: Unshielded Transactions ⏳ NOT STARTED
+**Timeline:** Week 7 (15-20 hours)
+**Goal:** Send/receive unshielded tokens (no privacy yet)
+
+#### Tasks:
+1. **Substrate RPC Client**
+   - **Challenge:** Port from Polkadot.js (TypeScript)
+   - **Tech:** OkHttp + WebSocket
+   - **Methods:** `chain_getBlockHash()`, `state_getStorage()`, `author_submitExtrinsic()`
+
+2. **SCALE Codec**
+   - **Port from:** `parity-scale-codec` (Rust)
+   - Encode/decode Substrate transactions
+   - Critical for transaction serialization
+
+3. **Transaction Building**
+   - **Port from:** `@midnight-ntwrk/ledger` (Rust WASM)
+   - Build unsigned transaction
+   - Sign with ed25519
+   - Broadcast to network
+
+4. **Balance Queries**
+   - RPC calls to query blockchain state
+   - Parse unshielded balance
+
+#### Deliverables:
+- [ ] `:core:network` module (Substrate RPC)
+- [ ] `:core:ledger` module (transaction logic)
+- [ ] Can send/receive unshielded tokens
+- [ ] Integration tests with testnet
+
+#### Files to Create:
+```
+core/network/
+  ├── SubstrateRpcClient.kt
+  ├── PolkadotApi.kt
+  └── dto/BlockchainResponses.kt
+
+core/ledger/
+  ├── UnshieldedTransaction.kt
+  ├── TransactionBuilder.kt
+  ├── TransactionSigner.kt
+  └── ScaleCodec.kt
+```
+
+**Blockers:** Need testnet endpoint from user
+
+---
+
+### Phase 3: Shielded Transactions ⏳ NOT STARTED
+**Timeline:** Weeks 8-9 (20-25 hours)
+**Goal:** Private transactions with ZK proofs
+
+#### Tasks:
+1. **Proof Server Client**
+   - HTTP REST API to user's proof server
+   - Send transaction inputs
+   - Receive ZK proofs
+
+2. **Shielded Transaction Logic**
+   - **Port from:** `@midnight-ntwrk/zswap` (client-side only)
+   - Note construction
+   - Nullifier derivation
+   - Proof integration
+
+3. **Transaction Flow:**
+   ```
+   1. App: Create shielded tx inputs
+   2. App → Proof Server: HTTP POST with inputs
+   3. Proof Server: Generate ZK proof (compute-intensive)
+   4. Proof Server → App: Return proof
+   5. App: Combine proof + tx, sign, broadcast
+   ```
+
+#### Deliverables:
+- [ ] `:core:prover-client` module
+- [ ] Shielded transaction support
+- [ ] Can send private transactions
+
+#### Files to Create:
+```
+core/prover-client/
+  ├── ProofServerClient.kt
+  ├── dto/ProofRequest.kt
+  └── dto/ProofResponse.kt
+
+core/ledger/
+  ├── ShieldedTransaction.kt
+  ├── NoteConstructor.kt
+  └── NullifierDerivation.kt
+```
+
+**Blockers:** Need proof server URL from user
+
+---
+
+### Phase 4: Indexer Integration ⏳ NOT STARTED
+**Timeline:** Weeks 9-10 (15-20 hours)
+**Goal:** Fast state sync (vs slow RPC polling)
+
+#### Tasks:
+1. **Indexer HTTP Client**
+   - Query transaction history
+   - Query balances (shielded + unshielded)
+   - WebSocket for real-time updates
+
+2. **Local Caching**
+   - **Port from:** `@midnight-ntwrk/indexer-public-data-provider`
+   - Room database for state
+   - Sync on app start + periodic refresh
+
+#### Deliverables:
+- [ ] `:core:indexer` module
+- [ ] Faster balance updates
+- [ ] Transaction history
+
+#### Files to Create:
+```
+core/indexer/
+  ├── IndexerClient.kt
+  ├── StateProvider.kt
+  └── dto/IndexerResponses.kt
+
+core/database/
+  ├── entities/TransactionEntity.kt
+  └── dao/TransactionDao.kt
+```
+
+**Blockers:** Need indexer endpoint from user
+
+---
+
+### Phase 5: DApp Connector ⏳ NOT STARTED
+**Timeline:** Weeks 10-11 (15-20 hours)
+**Goal:** Allow mobile dapps to request signatures
+
+#### Tasks:
+1. **Deep Link Protocol**
+   - Register `midnight://` URL scheme
+   - Parse DApp requests
+   - Show permission dialog
+   - Return signatures to DApp
+
+2. **Contract Signing**
+   - Parse contract call requests
+   - Build contract transactions
+   - Sign with user approval
+
+3. **Alternative: WebView Bridge**
+   - If DApp runs in wallet's WebView
+   - JavaScript bridge: `window.midnight.request()`
+
+#### Deliverables:
+- [ ] `:feature:dapp-connector` module
+- [ ] Deep link handling
+- [ ] Contract signing API
+- [ ] Permission management
+
+#### Files to Create:
+```
+feature/dapp-connector/
+  ├── DAppConnectorActivity.kt
+  ├── DAppRequest.kt
+  ├── ApprovalDialog.kt
+  └── ContractSigner.kt
+
+core/contracts/
+  ├── ContractCallBuilder.kt
+  └── ContractABI.kt
+```
+
+**Blockers:** None
+
+---
+
+### Phase 6: UI & Polish ⏳ NOT STARTED
+**Timeline:** Weeks 11-12 (10-15 hours)
+**Goal:** Complete Compose UI
+
+#### Screens:
+1. **Onboarding**
+   - Create wallet → seed phrase → verify backup
+   - Restore from seed
+   - PIN/biometric setup
+
+2. **Wallet Home**
+   - Balance (shielded + unshielded)
+   - Transaction history (LazyColumn)
+   - Send/Receive buttons
+
+3. **Send Transaction**
+   - Recipient address input
+   - Amount input
+   - Shielded/unshielded toggle
+   - Fee estimation
+   - Confirmation screen
+
+4. **Receive**
+   - Address display (text + QR)
+   - Copy/share
+
+5. **Settings** ⭐ IMPORTANT
+   - **Network Configuration Panel:**
+     - Testnet (default endpoints)
+     - Preview (default endpoints)
+     - Custom (user-provided endpoints)
+   - **Endpoints to configure:**
+     - Node RPC (WebSocket)
+     - Indexer API (HTTP)
+     - Proof Server (HTTP)
+   - Backup seed phrase (re-auth required)
+   - Security settings
+   - About/version
+
+#### Deliverables:
+- [ ] All feature modules with Compose UI
+- [ ] Navigation (Compose Navigation)
+- [ ] Material3 design system
+- [ ] Settings panel for endpoint configuration
+
+**Blockers:** None
 
 ---
 
@@ -82,604 +360,229 @@ Build a zero-knowledge privacy-focused cryptocurrency wallet for Android. Demons
 
 ```
 midnight-wallet/
-├── app/                           # Main app module (navigation, DI setup)
+├── app/                           # Navigation, DI setup
 ├── feature/
-│   ├── wallet/                    # Wallet home screen (balance, transactions)
-│   ├── send/                      # Send transaction flow
-│   ├── receive/                   # Receive (QR code, address)
-│   ├── settings/                  # Settings, backup, security
-│   └── onboarding/                # Create/restore wallet flow
+│   ├── onboarding/                # Create/restore wallet
+│   ├── wallet/                    # Home (balance, history)
+│   ├── send/                      # Send transaction
+│   ├── receive/                   # Receive + QR code
+│   ├── settings/                  # Settings + network config ⭐
+│   └── dapp-connector/            # DApp integration
 ├── core/
-│   ├── crypto/                    # Key generation, signing, encryption
-│   ├── network/                   # Blockchain API client (Retrofit)
-│   ├── database/                  # Room (entities, DAOs, encrypted DB)
-│   ├── datastore/                 # DataStore/EncryptedSharedPreferences
-│   ├── ui/                        # Design system, shared Compose components
-│   ├── domain/                    # Use cases, repositories (interfaces)
-│   ├── common/                    # Extensions, utils, constants
-│   └── testing/                   # Test utilities, fakes
-├── build-logic/                   # Convention plugins
-└── gradle/libs.versions.toml      # Version catalog
-```
-
-### Module Dependencies
-
-```
-:app
-  ├─ :feature:wallet
-  ├─ :feature:send
-  ├─ :feature:receive
-  ├─ :feature:settings
-  └─ :feature:onboarding
-
-:feature:* (any feature module)
-  ├─ :core:domain
-  ├─ :core:ui
-  └─ :core:common
-
-:core:domain
-  └─ :core:common
-
-:core:network
-  ├─ :core:domain
-  └─ :core:common
-
-:core:database
-  ├─ :core:domain
-  └─ :core:common
-
-:core:crypto
-  └─ :core:common
-```
-
-**Dependency rule:** Features can depend on core, not other features. Core modules don't depend on features.
-
----
-
-## Clean Architecture Layers
-
-### Domain Layer (:core:domain)
-
-**Entities:**
-```kotlin
-data class Wallet(
-    val address: String,
-    val publicKey: String,
-    val createdAt: Long
-)
-
-data class Transaction(
-    val hash: String,
-    val from: String,
-    val to: String,
-    val amount: BigDecimal,
-    val status: TransactionStatus,
-    val timestamp: Long
-)
-
-enum class TransactionStatus { PENDING, CONFIRMED, FAILED }
-```
-
-**Repositories (interfaces):**
-```kotlin
-interface WalletRepository {
-    suspend fun createWallet(pin: String): Result<Wallet>
-    suspend fun restoreWallet(seedPhrase: List<String>, pin: String): Result<Wallet>
-    suspend fun getWallet(): Wallet?
-    suspend fun getBalance(): Flow<BigDecimal>
-}
-
-interface TransactionRepository {
-    suspend fun sendTransaction(to: String, amount: BigDecimal, pin: String): Result<Transaction>
-    suspend fun getTransactions(): Flow<List<Transaction>>
-}
-```
-
-**Use Cases:**
-```kotlin
-class CreateWalletUseCase(private val repo: WalletRepository) {
-    suspend operator fun invoke(pin: String): Result<Wallet> {
-        return repo.createWallet(pin)
-    }
-}
-
-class SendTransactionUseCase(
-    private val repo: TransactionRepository,
-    private val walletRepo: WalletRepository
-) {
-    suspend operator fun invoke(to: String, amount: BigDecimal, pin: String): Result<Transaction> {
-        // Validate balance
-        val balance = walletRepo.getBalance().first()
-        if (balance < amount) return Result.failure(InsufficientFundsException())
-
-        // Send transaction
-        return repo.sendTransaction(to, amount, pin)
-    }
-}
+│   ├── crypto/                    # BIP-39, HD keys, ed25519 (PORT)
+│   ├── ledger/                    # Transactions (PORT)
+│   ├── network/                   # Substrate RPC (NEW)
+│   ├── indexer/                   # Indexer client (NEW)
+│   ├── prover-client/             # Proof server API (NEW)
+│   ├── database/                  # Room + SQLCipher
+│   ├── datastore/                 # EncryptedSharedPreferences
+│   ├── domain/                    # Use cases, repos
+│   ├── ui/                        # Design system
+│   ├── common/                    # Extensions, utils
+│   └── testing/                   # Test utilities
+└── build-logic/                   # Convention plugins
 ```
 
 ---
 
-### Data Layer
+## Porting Strategy
 
-#### :core:crypto (Cryptography)
+### From Midnight Libraries (What to Port)
 
-**KeyGenerator:**
-```kotlin
-class KeyGenerator {
-    fun generateKeyPair(): KeyPair {
-        // ed25519 key pair generation
-        // Use Tink or BouncyCastle
-    }
+| Source | Destination | Strategy |
+|--------|-------------|----------|
+| `@scure/bip39` (TS) | `:core:crypto` | Use Zcash `kotlin-bip39` |
+| `@scure/bip32` (TS) | `:core:crypto` | Included in `kotlin-bip39` |
+| Ed25519 | `:core:crypto` | Use BouncyCastle |
+| `@midnight-ntwrk/wallet-sdk-address-format` (TS) | `AddressFormatter.kt` | Port Bech32m logic |
+| `@midnight-ntwrk/ledger` (Rust) | `:core:ledger` | Reverse-engineer + SCALE codec |
+| `@midnight-ntwrk/zswap` (Rust) | `:core:ledger` | Port client-side only |
+| Polkadot.js (TS) | `:core:network` | Port essential RPC methods |
 
-    fun deriveAddress(publicKey: ByteArray): String {
-        // SHA-256 hash + encoding
-    }
+### What NOT to Port (Remote Services)
 
-    fun generateSeedPhrase(): List<String> {
-        // BIP39 mnemonic (24 words)
-    }
-
-    fun restoreKeyPairFromSeed(seedPhrase: List<String>): KeyPair {
-        // BIP39 → seed → derive keys
-    }
-}
-```
-
-**TransactionSigner:**
-```kotlin
-class TransactionSigner(private val keyStore: SecureKeyStore) {
-    suspend fun signTransaction(tx: Transaction, pin: String): ByteArray {
-        val privateKey = keyStore.getPrivateKey(pin)
-        // ed25519 signature
-    }
-}
-```
-
-**SecureKeyStore:**
-```kotlin
-class SecureKeyStore(private val context: Context) {
-    fun storePrivateKey(privateKey: ByteArray, pin: String) {
-        // Encrypt with AES-256 (key derived from PIN + salt)
-        // Store in Android Keystore
-    }
-
-    fun getPrivateKey(pin: String): ByteArray {
-        // Decrypt from Keystore
-    }
-}
-```
+1. **ZK Proof Generation** - User's proof server (too compute-intensive)
+2. **Ledger Runtime** - Stays on-chain
+3. **Node Infrastructure** - Use existing Midnight nodes
 
 ---
 
-#### :core:network (Blockchain API)
+## External Dependencies
 
-**MidnightApi (Retrofit):**
-```kotlin
-interface MidnightApi {
-    @GET("balance/{address}")
-    suspend fun getBalance(@Path("address") address: String): BalanceResponse
+### User Must Provide:
 
-    @GET("transactions/{address}")
-    suspend fun getTransactions(@Path("address") address: String): List<TransactionDto>
+| Service | Type | Purpose | Example |
+|---------|------|---------|---------|
+| **Node RPC** | WebSocket | Blockchain queries | `wss://rpc.testnet.midnight.network` |
+| **Indexer** | HTTP | Fast state sync | `https://indexer.testnet.midnight.network` |
+| **Proof Server** | HTTP | ZK proof generation | `https://prover.mydomain.com` |
 
-    @POST("broadcast")
-    suspend fun broadcastTransaction(@Body tx: SignedTransactionDto): BroadcastResponse
-}
-```
+### Network Defaults (in Settings):
 
-**NetworkDataSource:**
-```kotlin
-class MidnightNetworkDataSource(private val api: MidnightApi) {
-    suspend fun getBalance(address: String): Result<BigDecimal> {
-        return try {
-            val response = api.getBalance(address)
-            Result.success(response.balance.toBigDecimal())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-}
-```
+**Testnet:**
+- Node: `wss://rpc.testnet.midnight.network`
+- Indexer: `https://indexer.testnet.midnight.network`
+- Proof Server: (user provides)
+
+**Preview:**
+- Node: `wss://rpc.preview.midnight.network`
+- Indexer: `https://indexer.preview.midnight.network`
+- Proof Server: (user provides)
+
+**Custom:**
+- All endpoints user-configurable
 
 ---
 
-#### :core:database (Room + Encryption)
+## Risk Assessment
 
-**Entities:**
-```kotlin
-@Entity(tableName = "wallet")
-data class WalletEntity(
-    @PrimaryKey val address: String,
-    val publicKey: String,
-    val encryptedPrivateKey: String,
-    val createdAt: Long
-)
+### 🔴 High Risk
+1. **Transaction Format Mismatch** - Kotlin doesn't match Midnight's expectations
+   - *Mitigation:* Extensive testnet validation, compare with TypeScript SDK
+2. **SCALE Codec Bugs** - Incorrect serialization
+   - *Mitigation:* Test vectors, validate against Rust
+3. **Proof Server API** - Changes, auth issues
+   - *Mitigation:* Mock server first, document API contract
 
-@Entity(tableName = "transactions")
-data class TransactionEntity(
-    @PrimaryKey val hash: String,
-    val from: String,
-    val to: String,
-    val amount: String,
-    val status: String,
-    val timestamp: Long
-)
-```
+### 🟡 Medium Risk
+1. **Polkadot.js RPC** - Missing/incorrect methods
+   - *Mitigation:* Start minimal, expand as needed
+2. **Indexer Changes** - API updates break client
+   - *Mitigation:* Version calls, graceful errors
 
-**DAOs:**
-```kotlin
-@Dao
-interface WalletDao {
-    @Query("SELECT * FROM wallet LIMIT 1")
-    suspend fun getWallet(): WalletEntity?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWallet(wallet: WalletEntity)
-}
-
-@Dao
-interface TransactionDao {
-    @Query("SELECT * FROM transactions ORDER BY timestamp DESC")
-    fun getTransactions(): Flow<List<TransactionEntity>>
-
-    @Insert
-    suspend fun insertTransaction(tx: TransactionEntity)
-}
-```
-
-**Database:**
-```kotlin
-@Database(entities = [WalletEntity::class, TransactionEntity::class], version = 1)
-abstract class MidnightDatabase : RoomDatabase() {
-    abstract fun walletDao(): WalletDao
-    abstract fun transactionDao(): TransactionDao
-
-    companion object {
-        fun create(context: Context): MidnightDatabase {
-            return Room.databaseBuilder(
-                context,
-                MidnightDatabase::class.java,
-                "midnight.db"
-            )
-            .openHelperFactory(SupportFactory(SQLiteDatabase.getBytes("your_passphrase".toCharArray())))
-            .build()
-        }
-    }
-}
-```
-
----
-
-### Presentation Layer (:feature modules)
-
-#### :feature:wallet (Home Screen)
-
-**ViewModel (MVI pattern):**
-```kotlin
-data class WalletUiState(
-    val wallet: Wallet? = null,
-    val balance: BigDecimal = BigDecimal.ZERO,
-    val transactions: List<Transaction> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
-
-sealed interface WalletIntent {
-    object LoadWallet : WalletIntent
-    object Refresh : WalletIntent
-}
-
-class WalletViewModel(
-    private val getWalletUseCase: GetWalletUseCase,
-    private val getBalanceUseCase: GetBalanceUseCase,
-    private val getTransactionsUseCase: GetTransactionsUseCase
-) : ViewModel() {
-    private val _state = MutableStateFlow(WalletUiState())
-    val state: StateFlow<WalletUiState> = _state.asStateFlow()
-
-    fun onIntent(intent: WalletIntent) {
-        when (intent) {
-            is WalletIntent.LoadWallet -> loadWallet()
-            is WalletIntent.Refresh -> refresh()
-        }
-    }
-
-    private fun loadWallet() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-
-            val wallet = getWalletUseCase()
-            combine(
-                flowOf(wallet),
-                getBalanceUseCase(wallet.address),
-                getTransactionsUseCase(wallet.address)
-            ) { w, bal, txs ->
-                WalletUiState(wallet = w, balance = bal, transactions = txs, isLoading = false)
-            }.collect { newState ->
-                _state.update { newState }
-            }
-        }
-    }
-}
-```
-
-**Compose UI:**
-```kotlin
-@Composable
-fun WalletScreen(
-    viewModel: WalletViewModel = hiltViewModel()
-) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(WalletIntent.LoadWallet)
-    }
-
-    Scaffold(
-        topBar = { WalletTopBar() }
-    ) { padding ->
-        when {
-            state.isLoading -> LoadingView()
-            state.error != null -> ErrorView(state.error!!)
-            else -> WalletContent(
-                balance = state.balance,
-                transactions = state.transactions,
-                onRefresh = { viewModel.onIntent(WalletIntent.Refresh) },
-                onSendClick = { /* navigate to send screen */ },
-                onReceiveClick = { /* navigate to receive screen */ }
-            )
-        }
-    }
-}
-```
-
----
-
-## Implementation Timeline
-
-### Week 5: Architecture + Setup (8-10 hours)
-
-**Tasks:**
-- Set up multi-module project structure
-- Create version catalog (libs.versions.toml)
-- Set up convention plugins (build-logic/)
-- Define domain entities, repository interfaces
-- Set up Hilt modules
-- Study Midnight blockchain docs and crypto libraries
-
-**Deliverable:** Empty project structure, all modules created, domain layer defined
-
----
-
-### Week 6: Crypto + Data Layer (10-12 hours)
-
-**Tasks:**
-- Implement KeyGenerator (ed25519, BIP39)
-- Implement SecureKeyStore (Android Keystore, AES-256)
-- Implement TransactionSigner
-- Set up Room database (encrypted)
-- Implement WalletRepository
-- Write unit tests for crypto layer (80%+ coverage)
-
-**Deliverable:** Core crypto and database working, unit tested
-
----
-
-### Week 7: Network + UI (10-12 hours)
-
-**Tasks:**
-- Implement MidnightApi (Retrofit)
-- Implement TransactionRepository
-- Build Compose UI:
-  - Onboarding (create/restore wallet)
-  - Wallet home (balance, transactions)
-  - Send transaction
-  - Receive (QR code)
-- Implement ViewModels (MVI pattern)
-
-**Deliverable:** Full app flow working (create wallet → view balance → send/receive)
-
----
-
-### Week 8: Testing + Polish + CI/CD (8-10 hours)
-
-**Tasks:**
-- Unit tests (ViewModels, UseCases, Repositories)
-- Integration tests (Repository + DAO + API)
-- Compose UI tests (user flows)
-- Security audit (key storage, encryption, ProGuard)
-- GitHub Actions CI/CD (build, test, lint)
-- Architecture documentation (diagrams)
-- README (setup, architecture, screenshots)
-
-**Deliverable:** Production-ready app, published on GitHub
-
----
-
-## Security Considerations
-
-### 1. Private Key Storage
-**Problem:** Private keys must never be stored in plaintext
-**Solution:**
-- Store encrypted in Android Keystore (hardware-backed on modern devices)
-- Encrypt with AES-256, key derived from user PIN + salt (PBKDF2)
-- Use `EncryptedSharedPreferences` for seed phrase backup (optional)
-
-### 2. PIN/Biometric Authentication
-**Problem:** Prevent unauthorized access to wallet
-**Solution:**
-- BiometricPrompt for biometric auth (fingerprint, face)
-- PIN fallback if biometric not available
-- Lock wallet after 3 failed attempts (time delay)
-
-### 3. Transaction Signing
-**Problem:** Transactions must be signed offline, never send private key
-**Solution:**
-- Sign locally with ed25519
-- Only broadcast signed transaction to network
-- Verify signature before broadcast
-
-### 4. Code Obfuscation
-**Problem:** Reverse engineering could expose vulnerabilities
-**Solution:**
-- Enable R8 obfuscation (ProGuard rules)
-- Remove logs in release builds
-- Don't hardcode API keys (use BuildConfig)
-
-### 5. Root Detection
-**Problem:** Rooted devices can access Keystore
-**Solution:**
-- Detect root (RootBeer library)
-- Warn user (don't block, user's choice)
-
----
-
-## Trade-offs & Design Decisions
-
-### Multi-Module vs Single Module
-**Chosen:** Multi-module
-**Why:** Scales better, faster builds (parallel), clear boundaries
-**Trade-off:** More setup complexity, navigation between modules
-
-### Clean Architecture vs MVVM Only
-**Chosen:** Clean Architecture (domain + data + presentation layers)
-**Why:** Testable, decoupled, easier to swap implementations (e.g., different blockchain API)
-**Trade-off:** More boilerplate (UseCases, Repository interfaces)
-
-### Room vs Realm vs Firebase
-**Chosen:** Room (encrypted with SQLCipher)
-**Why:** Official, Kotlin-friendly, encryption support
-**Trade-off:** More setup than Firebase, but better security control
-
-### MVI vs MVVM
-**Chosen:** MVI (Model-View-Intent)
-**Why:** Unidirectional data flow, single immutable state, easier debugging
-**Trade-off:** More boilerplate than simple MVVM
-
-### On-Device Signing vs Server-Side
-**Chosen:** On-device signing (private key never leaves device)
-**Why:** True self-custody, no trust in server
-**Trade-off:** More complex, user responsible for backups
+### 🟢 Low Risk
+1. **Crypto** - Battle-tested libraries (BouncyCastle, Zcash)
+2. **Compose UI** - Already experienced from Weather App
 
 ---
 
 ## Testing Strategy
 
-### Unit Tests (80%+ coverage)
+### Phase 1: Crypto (Unit Tests)
+- BIP-39: Standard word lists
+- BIP-32: Published test vectors
+- Ed25519: libsodium test vectors
+- **Goal:** 100% crypto confidence
 
-**:core:crypto:**
-- Test key generation (ed25519 valid keys)
-- Test BIP39 seed phrase (valid mnemonics, checksum)
-- Test encryption/decryption (round-trip)
-- Test transaction signing (valid ed25519 signatures)
+### Phase 2-3: Integration
+- Mock blockchain (WireMock)
+- Mock proof server
+- **Goal:** Fast feedback without network
 
-**:core:domain:**
-- Test UseCases (mock repositories)
-- Test business logic (e.g., insufficient funds validation)
-
-**:core:data:**
-- Test Repository implementations (mock DAO + API)
-- Test mappers (DTO ↔ Entity ↔ Domain model)
-
-### Integration Tests
-
-- Repository + Room + API (use Hilt test module)
-- End-to-end flow: Create wallet → send tx → verify in DB
-
-### Compose UI Tests
-
-- Test user flows:
-  - Create wallet → backup seed phrase
-  - Send transaction → confirm success
-  - Restore wallet from seed phrase
+### Phase 4-6: End-to-End
+- Midnight testnet
+- Real transactions
+- Real proof generation
+- **Goal:** Production readiness
 
 ---
 
-## Resources
+## Success Criteria
 
-**Midnight Blockchain:**
-- Midnight Wallet Libraries: `/Users/norman/Development/midnight/midnight-libraries/midnight-wallet`
-- Study existing wallet implementation for crypto operations
+### Phase 1 (Foundation):
+- [ ] Create wallet from seed
+- [ ] Restore from seed
+- [ ] Derive addresses (all roles)
+- [ ] Secure key storage
 
-**Cryptography:**
-- [Tink](https://github.com/google/tink) - Google's crypto library for Android
-- [BouncyCastle](https://www.bouncycastle.org/) - Java cryptography library
-- [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) - Mnemonic seed phrases
+### Phase 2 (Unshielded):
+- [ ] Send unshielded tx
+- [ ] Receive unshielded tx
+- [ ] View balance
 
-**Android Security:**
-- [Android Keystore](https://developer.android.com/training/articles/keystore)
-- [EncryptedSharedPreferences](https://developer.android.com/topic/security/data)
-- [BiometricPrompt](https://developer.android.com/training/sign-in/biometric-auth)
+### Phase 3 (Shielded):
+- [ ] Send shielded tx (via proof server)
+- [ ] View shielded balance
 
-**Multi-Module Architecture:**
-- [Nowinandroid](https://github.com/android/nowinandroid) - Google's reference multi-module app
-- [Build logic](https://developer.android.com/build/migrate-to-catalogs) - Convention plugins, version catalogs
+### Phase 4 (Indexer):
+- [ ] Fast state sync
+- [ ] Transaction history
 
-**Similar Projects:**
-- [Trust Wallet](https://github.com/trustwallet/wallet-core) - Multi-coin wallet (for reference)
-- [Trezor Suite](https://github.com/trezor/trezor-suite) - Hardware wallet (architecture reference)
+### Phase 5 (DApp):
+- [ ] DApp request signature
+- [ ] User approve/reject
+- [ ] Sign contract calls
 
----
-
-## Interview Story Template
-
-**"Tell me about a complex project you built"**
-
-> "I built a zero-knowledge cryptocurrency wallet for Android called Midnight Wallet. The main challenge was balancing security with usability while handling sensitive operations like key generation and transaction signing.
->
-> I designed it using multi-module Clean Architecture with six core modules and five feature modules. This separation allowed me to isolate cryptographic operations in :core:crypto, making it easier to test and audit for security vulnerabilities.
->
-> The trickiest part was secure key storage. I used Android Keystore for hardware-backed encryption, storing the private key encrypted with AES-256 using a key derived from the user's PIN via PBKDF2. I also implemented BIP39 seed phrase generation for wallet recovery.
->
-> For the architecture, I chose MVI over traditional MVVM because wallet transactions require predictable, unidirectional state management - you can't have race conditions when dealing with real money. Every state transition is explicit and testable.
->
-> The app achieved 85% test coverage with unit tests for crypto operations, integration tests for the repository layer, and Compose UI tests for critical user flows. I also set up GitHub Actions for CI/CD with automated security checks using ProGuard.
->
-> This project deepened my understanding of Android security, cryptography, and blockchain. It also demonstrates my ability to architect large-scale apps with multiple modules while maintaining security best practices."
-
-**Follow-up questions:**
-- "How did you handle transaction failures?" → Retry logic with exponential backoff, persist pending txs in Room
-- "What if user forgets PIN?" → Seed phrase recovery (must back up during setup)
-- "How did you test cryptography?" → Unit tests with known test vectors, mock crypto in integration tests
-- "Security trade-offs?" → On-device signing (no server trust) vs user backup responsibility
+### Phase 6 (Polish):
+- [ ] Complete Compose UI
+- [ ] Network config panel
+- [ ] 80%+ test coverage
+- [ ] Published on GitHub
+- [ ] Demo video
 
 ---
 
-## Architecture Diagram
+## Timeline
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         :app (Navigation)                    │
-└───────────────────┬─────────────────────────────────────────┘
-                    │
-        ┌───────────┼───────────┬───────────┬──────────────┐
-        │           │           │           │              │
-        ▼           ▼           ▼           ▼              ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
-│ :feature │ │ :feature │ │ :feature │ │ :feature │ │ :feature │
-│  :wallet │ │   :send  │ │ :receive │ │:settings │ │:onboard  │
-└─────┬────┘ └─────┬────┘ └─────┬────┘ └─────┬────┘ └─────┬────┘
-      │            │            │            │            │
-      └────────────┴────────────┴────────────┴────────────┘
-                              │
-              ┌───────────────┼───────────────┬──────────┐
-              ▼               ▼               ▼          ▼
-      ┌──────────────┐ ┌──────────┐  ┌────────────┐ ┌────────┐
-      │ :core:domain │ │ :core:ui │  │:core:common│ │:core:  │
-      │ (UseCases,   │ │ (Design  │  │(Extensions)│ │testing │
-      │ Repos)       │ │  System) │  │            │ │        │
-      └──────┬───────┘ └──────────┘  └────────────┘ └────────┘
-             │
-   ┌─────────┼─────────┬─────────────┬────────────┐
-   ▼         ▼         ▼             ▼            ▼
-┌────────┐ ┌────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐
-│ :core: │ │ :core: │ │  :core:  │ │  :core:   │ │  :core:  │
-│ :crypto│ │:network│ │:database │ │:datastore │ │  :model  │
-│        │ │(Retro) │ │  (Room)  │ │ (Prefs)   │ │          │
-└────────┘ └────────┘ └──────────┘ └───────────┘ └──────────┘
-```
+### Realistic Estimate: 80-120 hours
+
+**Breakdown:**
+- Phase 1: 20-25 hours
+- Phase 2: 15-20 hours
+- Phase 3: 20-25 hours
+- Phase 4: 15-20 hours
+- Phase 5: 15-20 hours
+- Phase 6: 10-15 hours
+- Buffer: +20 hours
+
+**Schedule Options:**
+- **Fast:** 8 weeks @ 10-15 hrs/week
+- **Balanced:** 12 weeks @ 7-10 hrs/week
+
+**Recommendation:** 12-week timeline for learning curve and debugging buffer.
 
 ---
 
-**This project showcases your blockchain expertise and advanced Android skills. It's production-grade, secure, and tells a compelling story in interviews.** 🔒🚀
+## What We Need from User
+
+### Now (Before Phase 2):
+- [ ] Testnet endpoints (node, indexer, proof server)
+- [ ] Preview endpoints (node, indexer, proof server)
+- [ ] Test tokens (how to acquire)
+- [ ] Proof server authentication details (if required)
+
+### Later (Phase 3+):
+- [ ] Example transactions to study
+- [ ] Any Midnight-specific documentation
+- [ ] Contact for technical questions (if available)
+
+---
+
+## Interview Story
+
+> "I built a zero-knowledge cryptocurrency wallet for Midnight Network on Android. The main challenge was that Midnight's SDK is TypeScript/WASM-based with no mobile support - I had to port the entire crypto stack to Kotlin.
+>
+> I started by analyzing their failed WASM integration attempt which got stuck on externref handling. Instead, I took a pure Kotlin approach, porting BIP-39/32 HD wallet logic and implementing a Substrate RPC client to communicate with the blockchain.
+>
+> The trickiest part was transaction serialization - I had to reverse-engineer Midnight's Rust ledger (compiled to WASM) and reimplement their SCALE codec in Kotlin. I validated against test vectors and compared behavior with the TypeScript SDK to ensure compatibility.
+>
+> For zero-knowledge proofs, mobile devices can't generate them (too compute-intensive), so I architected it with a remote proof server. The app sends transaction inputs via HTTP, the server generates the proof, then the app combines it and broadcasts to the blockchain.
+>
+> The architecture uses Clean Architecture with 11 modules: 6 feature modules (onboarding, wallet, send, receive, settings, dapp-connector) and 5 core modules (crypto, ledger, network, indexer, prover-client). This separation let me test crypto in isolation with known test vectors before integrating with the blockchain.
+>
+> I achieved 80%+ test coverage: unit tests for all crypto operations, integration tests with mock blockchain, and end-to-end tests on Midnight's testnet. The wallet supports shielded and unshielded transactions, HD key derivation with Midnight-specific roles, and a DApp connector for mobile dapp integration."
+
+**Follow-ups:**
+- "How did you handle the SCALE codec?" → Studied Rust implementation, ported encode/decode logic with unit tests
+- "Why not use WASM?" → Externref limitations, bundle size, performance - native Kotlin is cleaner
+- "Security considerations?" → Android Keystore (hardware-backed), EncryptedSharedPreferences, SQLCipher, ProGuard obfuscation
+
+---
+
+## Progress Tracking
+
+Track phase completion in this file:
+- ⏳ NOT STARTED
+- 🏗️ IN PROGRESS
+- ✅ COMPLETE
+- ❌ BLOCKED
+
+**Current Phase:** Phase 1 (Foundation) - ⏳ NOT STARTED
+**Next Milestone:** Multi-module setup + BIP-39 implementation
+**Blockers:** None - ready to start
+
+---
+
+**Last Updated:** 2026-01-08
+**Project Start Date:** TBD (after Week 4 completion)
+**Expected Completion:** 8-12 weeks from start

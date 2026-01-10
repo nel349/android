@@ -409,7 +409,7 @@ Detailed topic checklist for each week of your Android learning journey. Check o
 
 ## Month 2: Clean Architecture + Midnight Wallet
 
-### Week 5: Clean Arch + Multi-Module + Midnight Wallet Start (15 hours) ⏳ **NEXT**
+### Week 5-6: Midnight Wallet Phase 1 - Foundation (20-25 hours) ⏳ **NEXT**
 
 #### Kotlin Language Topics
 
