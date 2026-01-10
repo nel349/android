@@ -194,26 +194,73 @@ core/domain/
 **Timeline:** Week 7 (15-20 hours)
 **Goal:** Send/receive unshielded tokens (no privacy yet)
 
+#### Core Concepts:
+
+**Transaction Structure:**
+- Midnight uses "Intents" with numbered segments
+- Segment 0 = Guaranteed (must succeed)
+- Segment 1+ = Fallible (may fail without invalidating transaction)
+- Each intent has TTL (expiration time)
+- Offers contain: inputs (UTXOs) + outputs (recipients/change) + signatures
+
+**UTXO State Machine:**
+- **Available** → can spend
+- **Pending** → selected for transaction, awaiting confirmation
+- **Spent** → confirmed on-chain
+- Rollback handling: Retracted blocks revert Spent → Available
+
+**Signing & Binding Flow:**
+1. Build transaction with unsigned intents
+2. Extract signature data from each segment (unique payload per segment)
+3. Sign each payload with Schnorr (BIP-340)
+4. Add signatures to offers (order matters - must match inputs)
+5. Bind transaction (final immutability step, cannot bind until fully signed)
+
+**Balancing Algorithm:**
+1. Calculate imbalances: sum(outputs) - sum(inputs) per token type
+2. Select coins using largest-first strategy
+3. Add change outputs for excess: change = inputs - outputs - fees
+4. Mark selected coins as Pending to prevent double-spend
+5. Add offers to Segment 0 (guaranteed section)
+
 #### Tasks:
-1. **Substrate RPC Client**
-   - **Challenge:** Port from Polkadot.js (TypeScript)
-   - **Tech:** OkHttp + WebSocket
-   - **Methods:** `chain_getBlockHash()`, `state_getStorage()`, `author_submitExtrinsic()`
+1. **Substrate RPC Client via Polkadot.js**
+   - WebSocket-based: `api.tx.midnight.sendMnTransaction(hexTx).send(callback)`
+   - Track states: Ready/Future/Broadcast (mempool) → InBlock → Finalized
+   - Handle Retracted (block rollback - tx back to mempool)
+   - Genesis fetching: `api.rpc.chain.getBlock(genesisHash)`, filter `midnight.sendMnTransaction`
+   - Reconnection with exponential backoff
 
 2. **SCALE Codec**
-   - **Port from:** `parity-scale-codec` (Rust)
-   - Encode/decode Substrate transactions
-   - Critical for transaction serialization
+   - Binary serialization for Substrate transactions
+   - Must exactly match Rust ledger format
+   - Critical for node submission
 
-3. **Transaction Building**
-   - **Port from:** `@midnight-ntwrk/ledger` (Rust WASM)
-   - Build unsigned transaction
-   - Sign with Schnorr (BIP-340)
-   - Broadcast to network
+3. **Intent-Based Transaction Builder**
+   - Create Transaction with Intent (Segment 0)
+   - Build Offer: selected inputs + recipient outputs + change outputs
+   - Set TTL for intent expiration
 
-4. **Balance Queries**
-   - RPC calls to query blockchain state
-   - Parse unshielded balance
+4. **Multi-Segment Signing**
+   - Extract signature data: `intent.signatureData(segment)`
+   - Sign with Schnorr key
+   - Add to offer: `offer.addSignatures([signature])`
+   - Multiple segments need separate signatures
+
+5. **Transaction Binding**
+   - Final step after all signatures added
+   - `transaction.bind()` makes immutable
+   - Cannot bind partial transactions
+
+6. **UTXO State Tracking**
+   - Local database: track Available/Pending/Spent per coin
+   - Coin selection: filter Available, select largest-first
+   - State transitions on: build tx, confirm, fail, rollback
+   - Sync with chain state via indexer
+
+7. **Balance Queries**
+   - Query via RPC: `state_getStorage()` for balance
+   - Parse genesis transactions for initial state
 
 #### Deliverables:
 - [ ] `:core:network` module (Substrate RPC)
@@ -243,26 +290,91 @@ core/ledger/
 **Timeline:** Weeks 8-9 (20-25 hours)
 **Goal:** Private transactions with ZK proofs
 
+#### Core Concepts:
+
+**Proving Recipe Pattern (determines how to handle transaction):**
+| Type | When | Action |
+|------|------|--------|
+| `TRANSACTION_TO_PROVE` | New shielded tx, needs proving | Serialize → POST /prove → Deserialize |
+| `BALANCE_TRANSACTION_TO_PROVE` | Imbalanced + needs proving | Balance first, THEN prove |
+| `NOTHING_TO_PROVE` | Already balanced | Skip proving, just sign & submit |
+
+**Zswap Secret Keys (different key set):**
+- Derive from HD seed with role = 3 (Zswap)
+- Signing keys use role = 0/1 (Night)
+- Zswap keys for: note encryption, nullifier derivation, shielded operations
+
+**Guaranteed vs Fallible Sections:**
+- Both sections may need balancing independently
+- Guaranteed (Segment 0): Must succeed, covers required outputs
+- Fallible (Segment 1+): Allowed to fail, for swaps/conditional operations
+- Each section gets separate coin selection + change outputs
+
+**Proof Server Binary Protocol:**
+- Content-Type: `application/octet-stream` (no JSON)
+- Request: Binary serialized unproven transaction (SCALE codec)
+- Response: Binary serialized proven transaction
+- Must EXACTLY match Rust ledger serialization format
+- Proving takes 10-60 seconds (compute-intensive)
+
+#### Shielded Transaction Flow:
+
+```
+1. Create transaction with shielded recipient outputs
+2. Calculate imbalances (inputs vs outputs) for both sections
+3. IF imbalanced:
+   a. Select shielded coins from Available set
+   b. Calculate change: inputs - outputs - fees
+   c. Add change outputs (back to self)
+   d. Mark coins as Pending
+4. Determine proving recipe type:
+   - If balanced → NOTHING_TO_PROVE
+   - If needs balancing → BALANCE_TRANSACTION_TO_PROVE
+   - If unproven → TRANSACTION_TO_PROVE
+5. IF needs proving:
+   a. Serialize transaction to binary (SCALE codec)
+   b. POST to /prove endpoint
+   c. Wait for proven transaction (retry 3x on 502-504)
+   d. Deserialize binary response
+6. Sign proven transaction (each segment)
+7. Bind transaction
+8. Submit to node via RPC
+```
+
 #### Tasks:
-1. **Proof Server Client**
-   - HTTP REST API to user's proof server
-   - Send transaction inputs
-   - Receive ZK proofs
+1. **Proof Server HTTP Client**
+   - Binary protocol, not JSON
+   - POST /prove: unproven tx → proven tx
+   - POST /check: validate before proving (fail fast)
+   - Retry strategy: 3 attempts, exponential backoff (2s, 4s, 8s)
+   - Handle 502/503/504 (server overload)
+   - CostModel parameter required
 
-2. **Shielded Transaction Logic**
-   - **Port from:** `@midnight-ntwrk/zswap` (client-side only)
-   - Note construction
-   - Nullifier derivation
-   - Proof integration
+2. **Proving Recipe Determination**
+   - Check transaction imbalances
+   - Decide: TRANSACTION_TO_PROVE, BALANCE_TRANSACTION_TO_PROVE, or NOTHING_TO_PROVE
+   - Route to appropriate handler
 
-3. **Transaction Flow:**
-   ```
-   1. App: Create shielded tx inputs
-   2. App → Proof Server: HTTP POST with inputs
-   3. Proof Server: Generate ZK proof (compute-intensive)
-   4. Proof Server → App: Return proof
-   5. App: Combine proof + tx, sign, broadcast
-   ```
+3. **Zswap Key Derivation**
+   - From HD seed: `m/44'/2400'/account'/3/index` (role=3)
+   - Store securely (separate from signing keys)
+   - Use for shielded operations
+
+4. **Shielded Balancing**
+   - Balance guaranteed section (Segment 0)
+   - Balance fallible section (Segment 1+) if exists
+   - Separate coin selection per section
+   - Create change outputs for each section
+
+5. **Binary Serialization**
+   - Serialize unproven transaction to SCALE format
+   - Must match Rust ledger format EXACTLY
+   - Deserialize proven transaction from binary response
+
+6. **Integration with Unshielded Flow**
+   - Reuse signing + binding from Phase 2
+   - Reuse UTXO state management
+   - Add shielded coin tracking
 
 #### Deliverables:
 - [ ] `:core:prover-client` module
@@ -290,16 +402,72 @@ core/ledger/
 **Timeline:** Weeks 9-10 (15-20 hours)
 **Goal:** Fast state sync (vs slow RPC polling)
 
-#### Tasks:
-1. **Indexer HTTP Client**
-   - Query transaction history
-   - Query balances (shielded + unshielded)
-   - WebSocket for real-time updates
+#### Core Concepts:
 
-2. **Local Caching**
-   - **Port from:** `@midnight-ntwrk/indexer-public-data-provider`
-   - Room database for state
-   - Sync on app start + periodic refresh
+**Why Indexer vs Node RPC:**
+- **Indexer:** Fast queries indexed by address, pre-computed aggregations, transaction history
+- **Node RPC:** Slower, requires parsing blocks sequentially, good for transaction submission only
+- Indexer provides near-instant balance queries vs seconds/minutes via RPC
+
+**GraphQL Protocol (Standard):**
+- HTTP for one-time queries (balance, transaction history)
+- WebSocket for real-time subscriptions (new transactions, balance updates)
+- Use existing Kotlin libraries (Apollo Kotlin)
+- Code generation from GraphQL schema for type safety
+
+**Typical Queries:**
+- Get balance by address (shielded + unshielded)
+- Get transaction history by address (paginated)
+- Get UTXO set by address
+- Get transaction details by hash
+
+**Real-time Subscriptions:**
+- Subscribe to new transactions for specific address
+- Subscribe to balance changes
+- Long-lived WebSocket connection with 100 retry attempts
+- Handle reconnection automatically
+
+#### Tasks:
+1. **GraphQL HTTP Client (One-time Queries)**
+   - Endpoint: `POST /graphql`
+   - Request: GraphQL query document + variables (JSON)
+   - Response: JSON result
+   - Use Apollo Kotlin for code generation
+   - Retry: 3 attempts on 502-504 (server errors)
+
+2. **GraphQL WebSocket Client (Real-time Subscriptions)**
+   - Protocol: `graphql-ws` (standard WebSocket subprotocol)
+   - Endpoint: `ws://indexer-url/graphql`
+   - Subscribe to address-specific events
+   - Retry: 100 attempts (connection drops are common)
+   - Handle connection lifecycle (connect, subscribe, reconnect)
+
+3. **Query Definitions**
+   - Balance by address
+   - Transaction history (paginated, filtered by address)
+   - UTXO set (available coins for spending)
+   - Transaction details (inputs, outputs, status)
+
+4. **Local State Caching**
+   - Room database to cache query results
+   - Reduce network calls for frequent operations
+   - Sync strategy:
+     - Initial load from indexer on app start
+     - Subscribe to updates via WebSocket
+     - Periodic refresh (every 30s) for reliability
+   - Handle stale data (timestamp-based invalidation)
+
+5. **Subscription Event Handling**
+   - New transaction received → update pending UTXO state
+   - Transaction confirmed → move UTXO from Pending to Spent
+   - Balance changed → refresh balance display
+   - Update Room database with new data
+
+6. **Integration with UTXO State Machine**
+   - Indexer provides authoritative chain state
+   - Local state (Available/Pending/Spent) syncs with indexer
+   - Handle discrepancies: indexer wins over local state
+   - Rollback detection: compare block hashes
 
 #### Deliverables:
 - [ ] `:core:indexer` module
@@ -454,9 +622,13 @@ midnight-wallet/
 | Schnorr/secp256k1 (BIP-340) | `:core:crypto` | Use `bitcoinj-core` or custom impl |
 | SHA-256 (address hash) | `AddressDerivation.kt` | Built-in Java SHA-256 |
 | `@midnight-ntwrk/wallet-sdk-address-format` (TS) | `Bech32mFormatter.kt` | Port Bech32m logic |
+| Transaction structure (Intents, Segments) | `:core:ledger` | Port structure, signing, binding logic |
+| UTXO state management | `:core:domain` | Port available/pending/spent tracking |
+| Coin selection algorithm | `:core:ledger` | Port balancing + coin selection |
 | `@midnight-ntwrk/ledger` (Rust) | `:core:ledger` | Reverse-engineer + SCALE codec |
-| `@midnight-ntwrk/zswap` (Rust) | `:core:ledger` | Port client-side only |
-| Polkadot.js (TS) | `:core:network` | Port essential RPC methods |
+| `@midnight-ntwrk/zswap` (Rust) | `:core:ledger` | Port client-side only (proving recipe) |
+| `@polkadot/api` (TS) | `:core:network` | Port essential RPC: sendMnTransaction, getBlock |
+| GraphQL indexer | `:core:indexer` | Use Apollo Kotlin (standard GraphQL) |
 
 ### What NOT to Port (Remote Services)
 
@@ -496,12 +668,16 @@ midnight-wallet/
 ## Risk Assessment
 
 ### 🔴 High Risk
-1. **Transaction Format Mismatch** - Kotlin doesn't match Midnight's expectations
-   - *Mitigation:* Extensive testnet validation, compare with TypeScript SDK
-2. **SCALE Codec Bugs** - Incorrect serialization
-   - *Mitigation:* Test vectors, validate against Rust
-3. **Proof Server API** - Changes, auth issues
-   - *Mitigation:* Mock server first, document API contract
+1. **Intent/Segment Structure** - Complex multi-segment signing, binding order matters
+   - *Mitigation:* Study TypeScript implementation carefully, unit test each step
+2. **Transaction Format Mismatch** - Kotlin doesn't match Midnight's binary format
+   - *Mitigation:* Extensive testnet validation, compare with TypeScript SDK outputs
+3. **SCALE Codec Bugs** - Incorrect serialization breaks proof server
+   - *Mitigation:* Test vectors, validate against Rust, binary comparison
+4. **Proof Server Binary Protocol** - Must exactly match ledger serialization
+   - *Mitigation:* Mock server first, document API contract, retry strategy
+5. **UTXO State Synchronization** - Rollbacks, reorgs, concurrent transactions
+   - *Mitigation:* Careful state machine, handle retracted blocks, pessimistic locking
 
 ### 🟡 Medium Risk
 1. **Polkadot.js RPC** - Missing/incorrect methods
@@ -644,6 +820,6 @@ Track phase completion in this file:
 
 ---
 
-**Last Updated:** 2026-01-09 (Address derivation algorithm verified)
+**Last Updated:** 2026-01-09 (Code review findings embedded into phases)
 **Project Start Date:** TBD (after Week 4 completion)
 **Expected Completion:** 8-12 weeks from start
