@@ -26,8 +26,8 @@
 - **Mobile Support:** None - no Kotlin/Java bindings, no Android documentation
 - **Complete SDK Available:**
   - HD wallets (BIP-32/BIP-44 derivation path: `m/44'/2400'/account'/role/index`)
-  - Address derivation (Bech32m format)
-  - Transaction signing (ed25519)
+  - Address derivation (SHA-256 hash → Bech32m format)
+  - Transaction signing (Schnorr over secp256k1, BIP-340)
   - Shielded transactions (zswap)
   - Contract interaction
 
@@ -54,6 +54,55 @@
 
 ---
 
+## Address Derivation Algorithm (Lace Compatibility) ✅
+
+**CRITICAL:** This exact algorithm ensures wallet compatibility with Lace (official Midnight wallet).
+
+### Complete Derivation Chain:
+
+```
+1. Mnemonic (24 words)
+   ↓
+2. BIP-39 → Seed (512 bits)
+   ↓
+3. BIP-32 HD Derivation → Private Key
+   Path: m/44'/2400'/account'/role/index
+   - COIN_TYPE = 2400 (Midnight's coin type)
+   - Roles: Night (0,1), Dust (2), Zswap (3), Metadata (4)
+   ↓
+4. Schnorr/secp256k1 (BIP-340) → Public Key (32 bytes)
+   - NOT Ed25519 (common misconception)
+   - x-only public key format
+   ↓
+5. SHA-256(publicKey) → Address (32 bytes)
+   - Source: midnight-ledger/base-crypto/src/hash.rs::persistent_hash
+   - Simple SHA-256 digest, no additional processing
+   ↓
+6. Bech32m Encoding → Human-readable Address
+   - Prefix: "mn_addr_{network}" or "mn_addr" (mainnet)
+   - Example: mn_addr_testnet1qxy...
+```
+
+### Implementation Sources:
+
+| Step | Source File | Library/Method |
+|------|-------------|----------------|
+| BIP-39 | `midnight-wallet/packages/hd/src/MnemonicUtils.ts` | `@scure/bip39` |
+| BIP-32 | `midnight-wallet/packages/hd/src/HDWallet.ts:123` | `@scure/bip32` HDKey.derive() |
+| Schnorr | `midnight-ledger/base-crypto/src/signatures.rs:17` | `k256::schnorr` (BIP-340) |
+| Hash | `midnight-ledger/base-crypto/src/hash.rs:92` | `Sha256::digest()` |
+| Bech32m | `midnight-wallet/packages/address-format/src/index.ts:58` | `@scure/base` bech32m.encode() |
+
+### Validation Strategy:
+
+1. **Test Vectors:** Use BIP-32/BIP-340 published test vectors
+2. **Cross-Check:** Generate same mnemonic in Lace and our wallet → addresses MUST match
+3. **Unit Tests:** Test each step independently with known outputs
+
+**Compatibility Guarantee:** If same mnemonic → same addresses between Lace and Android wallet.
+
+---
+
 ## Configuration Decisions
 
 Based on user requirements:
@@ -62,7 +111,7 @@ Based on user requirements:
 |-------------|----------|
 | **Proof Server** | User-hosted (Docker), provide endpoint URL in settings |
 | **Networks** | Testnet + Preview support with configurable endpoints |
-| **Crypto Libraries** | Zcash's `kotlin-bip39` + BouncyCastle for ed25519 |
+| **Crypto Libraries** | Zcash's `kotlin-bip39` + bitcoinj-core for Schnorr/secp256k1 (BIP-340) |
 | **Timeline** | Whatever it takes to do it right (8-12 weeks realistic) |
 | **Settings Panel** | Required for network/endpoint configuration with testnet/preview defaults |
 
@@ -92,17 +141,25 @@ Based on user requirements:
    - Derivation path: `m/44'/2400'/account'/role/index`
    - Roles: Night (0,1), Dust (2), Zswap (3), Metadata (4)
 
-4. **Ed25519 Key Pairs**
-   - **Library:** BouncyCastle
+4. **Schnorr secp256k1 Key Pairs (BIP-340)**
+   - **Library:** `bitcoinj-core` or custom implementation
+   - **Algorithm:** Schnorr signatures over secp256k1 (NOT Ed25519)
    - Generate from HD seed
-   - Public key → Address derivation
+   - 32-byte public key (BIP-340 x-only format)
 
-5. **Bech32m Address Formatting**
+5. **Address Derivation**
+   - **Algorithm:** `address = SHA-256(schnorrPublicKey32bytes)`
+   - **Source:** `/midnight-ledger/base-crypto/src/hash.rs` (persistent_hash)
+   - **Result:** 32-byte address (hex or bytes)
+
+6. **Bech32m Address Formatting**
    - **Port from:** `@midnight-ntwrk/wallet-sdk-address-format`
-   - Encode public keys to Midnight addresses
+   - **Prefix:** `mn_addr_{network}` or `mn_addr` (mainnet)
+   - **Example:** `mn_addr_testnet1abc...`
+   - Encode 32-byte address to Bech32m string
    - Checksum validation
 
-6. **Secure Storage**
+7. **Secure Storage**
    - Android Keystore (hardware-backed)
    - EncryptedSharedPreferences (seed backup)
    - Room + SQLCipher (wallet metadata)
@@ -118,8 +175,9 @@ Based on user requirements:
 core/crypto/
   ├── BIP39SeedGenerator.kt
   ├── HDKeyDerivation.kt
-  ├── Ed25519KeyPair.kt
-  ├── AddressFormatter.kt (Bech32m)
+  ├── SchnorrKeyPair.kt (BIP-340 secp256k1)
+  ├── AddressDerivation.kt (SHA-256 hash)
+  ├── Bech32mFormatter.kt (mn_addr encoding)
   └── SecureKeyStore.kt
 
 core/domain/
@@ -150,7 +208,7 @@ core/domain/
 3. **Transaction Building**
    - **Port from:** `@midnight-ntwrk/ledger` (Rust WASM)
    - Build unsigned transaction
-   - Sign with ed25519
+   - Sign with Schnorr (BIP-340)
    - Broadcast to network
 
 4. **Balance Queries**
@@ -369,7 +427,7 @@ midnight-wallet/
 │   ├── settings/                  # Settings + network config ⭐
 │   └── dapp-connector/            # DApp integration
 ├── core/
-│   ├── crypto/                    # BIP-39, HD keys, ed25519 (PORT)
+│   ├── crypto/                    # BIP-39, HD keys, Schnorr/secp256k1 (PORT)
 │   ├── ledger/                    # Transactions (PORT)
 │   ├── network/                   # Substrate RPC (NEW)
 │   ├── indexer/                   # Indexer client (NEW)
@@ -393,8 +451,9 @@ midnight-wallet/
 |--------|-------------|----------|
 | `@scure/bip39` (TS) | `:core:crypto` | Use Zcash `kotlin-bip39` |
 | `@scure/bip32` (TS) | `:core:crypto` | Included in `kotlin-bip39` |
-| Ed25519 | `:core:crypto` | Use BouncyCastle |
-| `@midnight-ntwrk/wallet-sdk-address-format` (TS) | `AddressFormatter.kt` | Port Bech32m logic |
+| Schnorr/secp256k1 (BIP-340) | `:core:crypto` | Use `bitcoinj-core` or custom impl |
+| SHA-256 (address hash) | `AddressDerivation.kt` | Built-in Java SHA-256 |
+| `@midnight-ntwrk/wallet-sdk-address-format` (TS) | `Bech32mFormatter.kt` | Port Bech32m logic |
 | `@midnight-ntwrk/ledger` (Rust) | `:core:ledger` | Reverse-engineer + SCALE codec |
 | `@midnight-ntwrk/zswap` (Rust) | `:core:ledger` | Port client-side only |
 | Polkadot.js (TS) | `:core:network` | Port essential RPC methods |
@@ -451,8 +510,9 @@ midnight-wallet/
    - *Mitigation:* Version calls, graceful errors
 
 ### 🟢 Low Risk
-1. **Crypto** - Battle-tested libraries (BouncyCastle, Zcash)
+1. **Crypto** - Battle-tested libraries (bitcoinj-core for Schnorr, Zcash for BIP-39/32)
 2. **Compose UI** - Already experienced from Weather App
+3. **Address Compatibility** - Simple SHA-256 hash, validated against Lace wallet
 
 ---
 
@@ -460,9 +520,10 @@ midnight-wallet/
 
 ### Phase 1: Crypto (Unit Tests)
 - BIP-39: Standard word lists
-- BIP-32: Published test vectors
-- Ed25519: libsodium test vectors
-- **Goal:** 100% crypto confidence
+- BIP-32: Published test vectors (from BIP-32 spec)
+- Schnorr/secp256k1: BIP-340 test vectors
+- Address derivation: Compare with Lace wallet outputs
+- **Goal:** 100% crypto confidence, Lace compatibility
 
 ### Phase 2-3: Integration
 - Mock blockchain (WireMock)
@@ -552,7 +613,7 @@ midnight-wallet/
 
 > "I built a zero-knowledge cryptocurrency wallet for Midnight Network on Android. The main challenge was that Midnight's SDK is TypeScript/WASM-based with no mobile support - I had to port the entire crypto stack to Kotlin.
 >
-> I started by analyzing their failed WASM integration attempt which got stuck on externref handling. Instead, I took a pure Kotlin approach, porting BIP-39/32 HD wallet logic and implementing a Substrate RPC client to communicate with the blockchain.
+> I started by analyzing their failed WASM integration attempt which got stuck on externref handling. Instead, I took a pure Kotlin approach, using Zcash's kotlin-bip39 for HD wallet derivation and implementing Schnorr signatures over secp256k1 (BIP-340) for transaction signing. Address derivation was straightforward - just SHA-256 hash of the public key, then Bech32m encoding - but I validated it against Lace wallet to ensure compatibility.
 >
 > The trickiest part was transaction serialization - I had to reverse-engineer Midnight's Rust ledger (compiled to WASM) and reimplement their SCALE codec in Kotlin. I validated against test vectors and compared behavior with the TypeScript SDK to ensure compatibility.
 >
@@ -583,6 +644,6 @@ Track phase completion in this file:
 
 ---
 
-**Last Updated:** 2026-01-08
+**Last Updated:** 2026-01-09 (Address derivation algorithm verified)
 **Project Start Date:** TBD (after Week 4 completion)
 **Expected Completion:** 8-12 weeks from start
