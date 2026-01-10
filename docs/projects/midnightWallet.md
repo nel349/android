@@ -103,6 +103,102 @@
 
 ---
 
+## New Findings from Latest midnight-libraries Update (Jan 9, 2026)
+
+### 1. Official DApp Connector API (`midnight-dapp-connector-api`)
+
+**Critical Discovery:** Midnight now has an official DApp Connector API specification!
+
+**API Structure:**
+```javascript
+window.midnight['com.wallet.id'] = {
+  rdns: 'com.wallet.id',
+  name: 'Wallet Name',
+  icon: 'data:image/...',
+  apiVersion: '1.0.0',
+  connect: async (networkId) => ConnectedAPI
+}
+```
+
+**18 Required Methods:**
+- getShieldedBalances, getUnshieldedBalances, getDustBalance
+- getShieldedAddresses, getUnshieldedAddress, getDustAddress
+- getTxHistory (paginated)
+- makeTransfer, makeIntent
+- balanceUnsealedTransaction, balanceSealedTransaction
+- signData, submitTransaction
+- getProvingProvider, getConfiguration
+- getConnectionStatus, hintUsage
+
+**Why This Matters:**
+- We now have exact API specification to implement
+- Must be WebView-based (JavaScript bridge injection)
+- 18 methods is more than originally planned (increased Phase 5 timeline)
+- Permission system required (hintUsage)
+- Configuration sharing required (wallet endpoints)
+
+### 2. ZK Parameter Data Provider (`data_provider.rs`)
+
+**New System:** Remote fetching of cryptographic parameters
+
+**Parameters Hosted on AWS S3:**
+- Public parameters (bls_midnight_2p0, 2p1, 2p2, 2p3)
+- Prover keys
+- Verifier keys
+- ZKIR representations
+
+**Local Cache:**
+- Location: `$MIDNIGHT_PP` / `$XDG_CACHE_HOME/midnight/zk-params` / `$HOME/.cache/midnight/zk-params`
+- SHA-256 verification on fetch
+- On-demand or synchronous fetch modes
+
+**Why This Matters:**
+- Don't bundle ZK parameters in APK (would be ~100MB+)
+- Fetch on-demand from Midnight's S3
+- Need cache management strategy (Android cache dir)
+- First-run experience (download parameters)
+
+### 3. Cost Model (`cost_model.rs`)
+
+**New Abstraction:** Time/cost measurement in picoseconds
+
+**CostDuration Type:**
+- Measured in picoseconds (u64)
+- Used for fee calculation
+- Arithmetic operations (Add, Sub, Mul, Div)
+- Human-readable formatting (ps, ns, μs, ms, s)
+
+**Why This Matters:**
+- Fee estimation now has formal model
+- Must pass CostModel to proof server
+- Display costs to user in human-readable format
+
+### 4. WalletFacade Unified Interface (`facade/src/index.ts`)
+
+**New Abstraction:** Single entry point for wallet operations
+
+**WalletFacade Combines:**
+- ShieldedWallet (zswap operations)
+- UnshieldedWallet (UTXO operations)
+- DustWallet (fee payments)
+
+**Key Methods:**
+- `state()` - Observable combining all three wallet states
+- `balanceTransaction()` - Unified balancing across shielded/unshielded/dust
+- `transferTransaction()` - Unified transfers (auto-routing)
+- `submitTransaction()` - Single submission point
+- `signTransaction()` - Unified signing
+- `calculateTransactionFee()` - Unified fee estimation
+
+**Why This Matters:**
+- Simplifies wallet implementation (one facade instead of three separate wallets)
+- Handles cross-wallet coordination (e.g., shielded → dust fee payment)
+- Provides unified sync state (`isSynced` checks all three)
+- ProvingRecipe pattern orchestrates proving flow
+- Reference implementation for our Kotlin architecture
+
+---
+
 ## Configuration Decisions
 
 Based on user requirements:
@@ -491,30 +587,65 @@ core/database/
 ---
 
 ### Phase 5: DApp Connector ⏳ NOT STARTED
-**Timeline:** Weeks 10-11 (15-20 hours)
-**Goal:** Allow mobile dapps to request signatures
+**Timeline:** Weeks 10-11 (20-25 hours - increased for full API)
+**Goal:** Implement Midnight's official DApp Connector API
+
+#### Core Concepts:
+
+**Official API:** `window.midnight[walletId]`
+- DApp accesses via: `window.midnight['com.example.wallet'].connect('testnet')`
+- Returns ConnectedAPI with 18 methods
+- All methods async (Promise-based)
+- Compatible with CAIP-372 draft standard
+
+**Critical Methods to Implement:**
+1. Balance queries (shielded, unshielded, dust)
+2. Address getters (all 3 types)
+3. Transaction creation (makeTransfer, makeIntent)
+4. Transaction balancing (unsealed, sealed)
+5. Transaction submission
+6. Data signing
+7. Proving provider delegation
+8. Configuration sharing (endpoints)
+9. Permission management (hintUsage)
+
+**Transaction States:**
+- Per-segment execution status: Success | Failure
+- Overall: finalized, confirmed, pending, discarded
+- Fallible segments allowed to fail
 
 #### Tasks:
-1. **Deep Link Protocol**
-   - Register `midnight://` URL scheme
-   - Parse DApp requests
-   - Show permission dialog
-   - Return signatures to DApp
+1. **WebView JavaScript Bridge**
+   - Inject `window.midnight['com.yourwallet.midnight']`
+   - InitialAPI: {rdns, name, icon, apiVersion, connect()}
+   - connect() returns ConnectedAPI (18 methods)
+   - Handle async Promise communication
 
-2. **Contract Signing**
-   - Parse contract call requests
-   - Build contract transactions
-   - Sign with user approval
+2. **Implement 18 ConnectedAPI Methods**
+   - Reuse Phase 2/3/4 logic for most operations
+   - Add permission checking layer
+   - Add user approval dialogs
 
-3. **Alternative: WebView Bridge**
-   - If DApp runs in wallet's WebView
-   - JavaScript bridge: `window.midnight.request()`
+3. **Permission System**
+   - hintUsage(methods[]) → show permission dialog
+   - Store per-DApp permissions (origin-based)
+   - Gate all methods by permissions
+
+4. **Configuration Sharing**
+   - Share wallet's node/indexer/prover URIs
+   - DApp should use same services (privacy/performance)
+
+5. **Proving Provider Delegation**
+   - DApp provides KeyMaterialProvider
+   - Wallet proves using its proof server
+   - Return ProvingProvider interface
 
 #### Deliverables:
 - [ ] `:feature:dapp-connector` module
-- [ ] Deep link handling
-- [ ] Contract signing API
-- [ ] Permission management
+- [ ] WebView with JavaScript bridge
+- [ ] 18 API methods implemented
+- [ ] Permission management system
+- [ ] Per-DApp permission storage
 
 #### Files to Create:
 ```
