@@ -4,6 +4,11 @@
 
 **Purpose:** Testing requirements and patterns for Midnight Wallet.
 
+**Related Guidelines:**
+- For Kotlin patterns in tests → See `KOTLIN_GUIDELINES.md`
+- For testing security features → See `SECURITY_GUIDELINES.md`
+- For testing Compose UI → See `COMPOSE_GUIDELINES.md`
+
 ---
 
 ## Test Structure (Given-When-Then)

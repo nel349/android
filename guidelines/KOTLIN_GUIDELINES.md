@@ -4,6 +4,10 @@
 
 **Purpose:** Kotlin-specific coding standards for Midnight Wallet.
 
+**Related Guidelines:**
+- For testing Kotlin code → See `TESTING_GUIDELINES.md`
+- For security patterns → See `SECURITY_GUIDELINES.md`
+
 ---
 
 ## Naming Conventions

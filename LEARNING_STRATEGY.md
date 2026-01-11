@@ -12,7 +12,7 @@
 - **We move forward** when you're ready
 
 ### 2. During Implementation
-- **I reference ENGINEERING_GUIDELINES.md** before writing code
+- **I reference relevant guidelines** before writing code
 - **You challenge** anything that seems off
 - **We iterate** until it's right
 

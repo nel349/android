@@ -4,6 +4,11 @@
 
 **Purpose:** Patterns and requirements specific to Midnight blockchain integration.
 
+**Related Guidelines:**
+- For general security patterns → See `SECURITY_GUIDELINES.md`
+- For Kotlin implementation → See `KOTLIN_GUIDELINES.md`
+- For testing Midnight features → See `TESTING_GUIDELINES.md`
+
 ---
 
 ## ⚠️ Important: This is a Learning Document

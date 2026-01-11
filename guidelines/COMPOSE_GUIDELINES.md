@@ -4,6 +4,11 @@
 
 **Purpose:** Best practices for Jetpack Compose UI development in Midnight Wallet.
 
+**Related Guidelines:**
+- For StateFlow/coroutines patterns → See `KOTLIN_GUIDELINES.md`
+- For testing Compose UI → See `TESTING_GUIDELINES.md`
+- For architecture patterns → See `ARCHITECTURE_GUIDELINES.md`
+
 ---
 
 ## State Hoisting

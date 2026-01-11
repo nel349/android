@@ -11,6 +11,9 @@ Build the Midnight Wallet for Android following elite engineering practices.
 
 ## Engineering Guidelines (Read Based on Task)
 
+**When making architectural decisions:**
+→ Read `guidelines/ARCHITECTURE_GUIDELINES.md`
+
 **When writing Kotlin code:**
 → Read `guidelines/KOTLIN_GUIDELINES.md`
 
@@ -25,6 +28,9 @@ Build the Midnight Wallet for Android following elite engineering practices.
 
 **When implementing Midnight-specific features:**
 → Read `guidelines/MIDNIGHT_GUIDELINES.md`
+
+**To see guideline updates:**
+→ Read `guidelines/CHANGELOG.md`
 
 ---
 

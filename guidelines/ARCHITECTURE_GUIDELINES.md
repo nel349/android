@@ -4,6 +4,12 @@
 
 **Purpose:** High-level architecture principles, project organization, and cross-cutting concerns.
 
+**Related Guidelines:**
+- For Kotlin-specific patterns → See `KOTLIN_GUIDELINES.md`
+- For testing strategies → See `TESTING_GUIDELINES.md`
+- For UI architecture → See `COMPOSE_GUIDELINES.md`
+- For security architecture → See `SECURITY_GUIDELINES.md`
+
 ---
 
 ## Core Principles

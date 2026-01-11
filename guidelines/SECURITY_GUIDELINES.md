@@ -4,6 +4,10 @@
 
 **Purpose:** Security best practices for handling cryptographic operations and sensitive data.
 
+**Related Guidelines:**
+- For Midnight-specific security → See `MIDNIGHT_GUIDELINES.md`
+- For testing security features → See `TESTING_GUIDELINES.md`
+
 ---
 
 ## NEVER Log Sensitive Data
