@@ -1,6 +1,6 @@
 # Midnight-Specific Implementation Guidelines
-**Version:** 1.0.0 - LIVING DOCUMENT
-**Last Updated:** January 10, 2026
+**Version:** 1.1.0 - LIVING DOCUMENT
+**Last Updated:** February 25, 2026
 
 **Purpose:** Patterns and requirements specific to Midnight blockchain integration.
 
@@ -25,6 +25,24 @@
 - Test during implementation
 - Update with real findings
 - Document what works (and what doesn't)
+
+---
+
+## Midnight Library Version (✅ Verified)
+
+**Current Version:** midnight-zswap v7.0.0 (via local path dependency)
+**Previous:** v6.1.0-alpha.5 constraint is dropped.
+
+### Version-Abstract FFI Strategy
+
+The Rust FFI layer is the abstraction boundary between Kotlin and Midnight library internals:
+
+- **Kotlin never sees Rust types.** All data crosses the FFI as JSON strings or opaque byte blobs.
+- **FFI function signatures are stable.** When a new Midnight version (e.g. v8) arrives, only the Rust implementation changes — not the C function signatures or return formats.
+- **Serialized state blobs are opaque.** Kotlin treats them as `ByteArray`. If a version change makes old blobs unreadable, the Rust layer returns an error and Kotlin triggers a full resync from genesis.
+- **Key derivation algorithm is identical across v6/v7** (same domain separators, same KDF). Test vectors validated across versions.
+
+**Implication:** Kotlin code and Android tests should never import or reference Midnight version numbers. The Rust `Cargo.toml` is the single source of truth for which version is in use.
 
 ---
 
